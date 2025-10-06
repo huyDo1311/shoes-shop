@@ -2,10 +2,10 @@ spring:
   application:
     name: shop
   datasource:
-    url: jdbc:mysql://localhost:3306/shoes-shop
+    url: jdbc:mysql://localhost:3307/shoes_shop
     username: root
     password: admin123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
