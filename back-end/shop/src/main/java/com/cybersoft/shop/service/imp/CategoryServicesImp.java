@@ -1,11 +1,11 @@
-package com.cybersoft.shop.services.imp;
+package com.cybersoft.shop.service.imp;
 
 import com.cybersoft.shop.entity.Category;
 import com.cybersoft.shop.repository.CategoryRepository;
 import com.cybersoft.shop.request.CategoryCreateRequest;
 import com.cybersoft.shop.request.CategoryUpdateRequest;
 import com.cybersoft.shop.response.CategoryResponse;
-import com.cybersoft.shop.services.CategoryServices;
+import com.cybersoft.shop.service.CategoryServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

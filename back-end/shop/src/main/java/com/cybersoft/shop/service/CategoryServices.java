@@ -1,4 +1,4 @@
-package com.cybersoft.shop.services;
+package com.cybersoft.shop.service;
 
 import com.cybersoft.shop.request.CategoryCreateRequest;
 import com.cybersoft.shop.request.CategoryUpdateRequest;

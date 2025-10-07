@@ -4,7 +4,8 @@ import com.cybersoft.shop.request.CategoryCreateRequest;
 import com.cybersoft.shop.request.CategoryUpdateRequest;
 import com.cybersoft.shop.response.BaseResponse;
 import com.cybersoft.shop.response.CategoryResponse;
-import com.cybersoft.shop.services.CategoryServices;
+import com.cybersoft.shop.response.ResponseObject;
+import com.cybersoft.shop.service.CategoryServices;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,8 +27,8 @@ public class CategoryController {
     public ResponseEntity<?> getAllCategory(){
 
         List<CategoryResponse> data = categoryServices.listCategory();
-        BaseResponse res = new BaseResponse();
-        res.setCode(HttpStatus.OK.value());
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
         res.setMessage("Get categories successfully");
         res.setData(data);
 
@@ -37,9 +38,9 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable int id){
         CategoryResponse data = categoryServices.getCategoryById(id);
-        BaseResponse res = new BaseResponse();
-        res.setCode(HttpStatus.OK.value());
-        res.setMessage("Get category successfully");
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Get categories successfully");
         res.setData(data);
 
         return ResponseEntity.ok(res);
@@ -49,9 +50,9 @@ public class CategoryController {
     public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryCreateRequest req){
         CategoryResponse data = categoryServices.createCategory(req);
 
-        BaseResponse res = new BaseResponse();
-        res.setCode(HttpStatus.CREATED.value());
-        res.setMessage("Create category successfully");
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Get categories successfully");
         res.setData(data);
 
         return new ResponseEntity<>(res, HttpStatus.CREATED);
@@ -61,9 +62,9 @@ public class CategoryController {
     public ResponseEntity<?> updateCategory(@PathVariable int id, @Valid @RequestBody CategoryUpdateRequest req){
         CategoryResponse data = categoryServices.update(id, req);
 
-        BaseResponse res = new BaseResponse();
-        res.setCode(HttpStatus.OK.value());
-        res.setMessage("Update category successfully");
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Get categories successfully");
         res.setData(data);
 
         return ResponseEntity.ok(res);
@@ -73,8 +74,8 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategory(@PathVariable int id){
         categoryServices.delete(id);
 
-        BaseResponse res =  new BaseResponse();
-        res.setCode(HttpStatus.OK.value());
+        ResponseObject res =  new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
         res.setMessage("Delete category successfully");
         res.setData(null);
 
