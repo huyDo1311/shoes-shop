@@ -1,40 +1,71 @@
 package com.cybersoft.shop.controller;
 
-import com.cybersoft.shop.request.InsertSizeRequest;
-import com.cybersoft.shop.services.SizeServices;
+import com.cybersoft.shop.request.SizeCreateRequest;
+import com.cybersoft.shop.response.ResponseObject;
+import com.cybersoft.shop.response.SizeResponse;
+import com.cybersoft.shop.service.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/sizes")
 public class SizeController {
 
     @Autowired
-    private SizeServices sizeServices;
+    private SizeService sizeService;
 
     @GetMapping
     public ResponseEntity<?> listSizes(){
-        return ResponseEntity.ok(sizeServices.listSize());
+        List<SizeResponse> data = sizeService.listSize();
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Get sizes successfully");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getSizes(@PathVariable int id){
-        return ResponseEntity.ok(sizeServices.getSize(id));
+    public ResponseEntity<?> getSize(@PathVariable int id){
+
+        var data = sizeService.getSizeById(id);
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Get size successfully");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping
-    public ResponseEntity<?> insertSizes(@RequestBody InsertSizeRequest req){
-        return ResponseEntity.ok(sizeServices.insertSize(req));
+    public ResponseEntity<?> createSize(@RequestBody SizeCreateRequest req){
+        var data = sizeService.createSize(req);
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Create size successfully");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSizes(@PathVariable int id, @RequestBody InsertSizeRequest req){
-        return ResponseEntity.ok(sizeServices.updateSize(id,req));
+    public ResponseEntity<?> updateSize(@PathVariable int id, @RequestBody SizeCreateRequest req){
+        var data = sizeService.createSize(req);
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Update size successfully");
+        res.setData(data);
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSizes(@PathVariable int id){
-        return ResponseEntity.ok(sizeServices.deleteSize(id));
+    public ResponseEntity<?> deleteSize(@PathVariable int id){
+        sizeService.deleteSize(id);
+        ResponseObject res = new ResponseObject();
+        res.setStatus(HttpStatus.OK.value());
+        res.setMessage("Update size successfully");
+        res.setData(null);
+        return ResponseEntity.ok(res);
     }
 }

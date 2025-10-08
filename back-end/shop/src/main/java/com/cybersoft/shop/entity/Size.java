@@ -1,16 +1,19 @@
 package com.cybersoft.shop.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
-@Entity(name = "sizes")
+@Entity
+@Table(name = "sizes")
 @Data
-public class Sizes {
+@Builder
+public class Size {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "size_value")
-    private int value;
+    @Column(nullable = false)
+    private int sizeValue;
 }

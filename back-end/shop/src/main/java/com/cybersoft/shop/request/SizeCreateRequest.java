@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class InsertSizeRequest {
+public class SizeCreateRequest {
     private int sizeValue;
 }
