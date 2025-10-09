@@ -8,4 +8,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
+  secret-key:
+    jwt: ctBoMlFyWkcFbOjvsTgFuCMqHn0Jx43bUzXUxXebVRE=
