@@ -1,7 +1,6 @@
 package com.cybersoft.shop.controller;
 
 import com.cybersoft.shop.request.SizeCreateRequest;
-import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.response.SizeResponse;
 import com.cybersoft.shop.service.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
