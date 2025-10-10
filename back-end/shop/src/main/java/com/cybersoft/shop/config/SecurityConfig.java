@@ -22,9 +22,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFilter authenticationFilter) throws Exception {
         return http.csrf(csrf -> csrf.disable())
-                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                //.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers("/users/*").permitAll();
+                    request.anyRequest().permitAll();
                 })
                 .build();
     }
