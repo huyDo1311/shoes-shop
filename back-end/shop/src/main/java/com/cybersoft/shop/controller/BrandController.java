@@ -1,10 +1,10 @@
 package com.cybersoft.shop.controller;
 
-import com.cybersoft.shop.request.CategoryCreateRequest;
-import com.cybersoft.shop.request.CategoryUpdateRequest;
-import com.cybersoft.shop.response.CategoryResponse;
+import com.cybersoft.shop.request.BrandCreateRequest;
+import com.cybersoft.shop.request.BrandUpdateRequest;
+import com.cybersoft.shop.response.BrandResponse;
 import com.cybersoft.shop.response.ResponseObject;
-import com.cybersoft.shop.service.CategoryServices;
+import com.cybersoft.shop.service.BrandService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,80 +15,76 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/brands")
 @Validated
-@RequestMapping("/categories")
-public class CategoryController {
+public class BrandController {
 
     @Autowired
-    private CategoryServices categoryServices;
+    private BrandService brandService;
 
     @GetMapping
-    public ResponseEntity<ResponseObject> getAllCategory(){
-
-        List<CategoryResponse> data = categoryServices.listCategory();
-
+    public ResponseEntity<ResponseObject> getAllBrand(){
+        List<BrandResponse> data = brandService.listBrand();
 
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .status(HttpStatus.OK.value())
-                        .message("Get all category successfully")
+                        .message("Get all brands successfully")
                         .data(data)
                         .build()
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseObject> getCategoryById(@PathVariable int id){
-        CategoryResponse data = categoryServices.getCategoryById(id);
+    public ResponseEntity<ResponseObject> getBrandById(@PathVariable int id){
+        BrandResponse data = brandService.getBrandById(id);
 
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .status(HttpStatus.OK.value())
-                        .message("Get category successfully")
+                        .message("Get brands successfully")
                         .data(data)
                         .build()
         );
     }
 
     @PostMapping
-    public ResponseEntity<?> createCategory(@Valid @RequestBody CategoryCreateRequest req){
-        CategoryResponse data = categoryServices.createCategory(req);
+    public ResponseEntity<ResponseObject> createBrand(@Valid @RequestBody BrandCreateRequest req){
+        BrandResponse data = brandService.createBrand(req);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ResponseObject.builder()
                         .status(HttpStatus.CREATED.value())
-                        .message("Create category successfully")
+                        .message("Create brands successfully")
                         .data(data)
                         .build()
         );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseObject> updateCategory(@PathVariable int id, @Valid @RequestBody CategoryUpdateRequest req){
-        CategoryResponse data = categoryServices.update(id, req);
+    public ResponseEntity<ResponseObject>  updateBrand(
+            @PathVariable int id, @Valid @RequestBody BrandUpdateRequest req){
+        BrandResponse data = brandService.updateBrand(id, req);
 
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .status(HttpStatus.OK.value())
-                        .message("Update category successfully")
+                        .message("Update brand successfully")
                         .data(data)
                         .build()
         );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseObject> deleteCategory(@PathVariable int id){
-        categoryServices.delete(id);
+    public ResponseEntity<ResponseObject> deleteBrand(@PathVariable int id){
+        brandService.deleteBrand(id);
 
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .status(HttpStatus.OK.value())
-                        .message("Delete category successfully")
+                        .message("Delete brand successfully")
                         .data(null)
                         .build()
         );
     }
-
-
-
 }
