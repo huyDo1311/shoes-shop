@@ -1,6 +1,5 @@
 package com.cybersoft.shop.service.imp;
 
-import com.cybersoft.shop.dto.UserDTO;
 import com.cybersoft.shop.entity.Role;
 import com.cybersoft.shop.entity.User;
 import com.cybersoft.shop.repository.RoleRepository;
@@ -9,12 +8,12 @@ import com.cybersoft.shop.request.SignInRequest;
 import com.cybersoft.shop.request.SignUpRequest;
 import com.cybersoft.shop.service.UserService;
 import com.cybersoft.shop.util.JWTHelper;
-import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+//fix loi
 import java.util.Optional;
 
 @Service
