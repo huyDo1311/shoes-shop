@@ -9,5 +9,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  secret-key:
-    jwt: ctBoMlFyWkcFbOjvsTgFuCMqHn0Jx43bUzXUxXebVRE=
+
+jwt:
+  expiration:     # 1 * 24 * 60 * 60 = giay
+    access: 900   #          15 * 60 = 15p = 900 giay
+    refresh: 3600 #      1 * 60 * 60 = 1 gio = 3600 giay
+  secret-key: ctBoMlFyWkcFbOjvsTgFuCMqHn0Jx43bUzXUxXebVRE=

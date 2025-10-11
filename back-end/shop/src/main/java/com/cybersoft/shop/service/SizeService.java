@@ -1,7 +1,7 @@
 package com.cybersoft.shop.service;
 
 import com.cybersoft.shop.request.SizeCreateRequest;
-import com.cybersoft.shop.response.SizeResponse;
+import com.cybersoft.shop.response.size.SizeResponse;
 
 
 import java.util.List;

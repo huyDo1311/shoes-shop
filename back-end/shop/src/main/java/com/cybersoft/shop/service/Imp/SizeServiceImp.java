@@ -3,13 +3,12 @@ package com.cybersoft.shop.service.Imp;
 import com.cybersoft.shop.entity.Size;
 import com.cybersoft.shop.repository.SizeRepository;
 import com.cybersoft.shop.request.SizeCreateRequest;
-import com.cybersoft.shop.response.SizeResponse;
+import com.cybersoft.shop.response.size.SizeResponse;
 import com.cybersoft.shop.service.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SizeServiceImp implements SizeService {

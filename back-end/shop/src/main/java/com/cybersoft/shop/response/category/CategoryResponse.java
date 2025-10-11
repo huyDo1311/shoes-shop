@@ -1,4 +1,4 @@
-package com.cybersoft.shop.response;
+package com.cybersoft.shop.response.category;
 
 import lombok.*;
 

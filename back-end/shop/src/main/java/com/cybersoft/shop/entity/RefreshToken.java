@@ -6,23 +6,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "refresh_tokens")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class RefreshToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
-    @Column(unique = true, nullable = false)
-    private String roleName;
+    private String refreshToken;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
-    private List<UserRole> userRoles;
+    private LocalDateTime refreshExpirationDate;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 }

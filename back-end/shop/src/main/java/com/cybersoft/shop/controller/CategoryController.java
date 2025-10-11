@@ -2,8 +2,7 @@ package com.cybersoft.shop.controller;
 
 import com.cybersoft.shop.request.CategoryCreateRequest;
 import com.cybersoft.shop.request.CategoryUpdateRequest;
-import com.cybersoft.shop.response.BaseResponse;
-import com.cybersoft.shop.response.CategoryResponse;
+import com.cybersoft.shop.response.category.CategoryResponse;
 import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.service.CategoryServices;
 import jakarta.validation.Valid;

@@ -1,20 +1,20 @@
 package com.cybersoft.shop.service.imp;
 
-import com.cybersoft.shop.dto.UserDTO;
 import com.cybersoft.shop.entity.Role;
 import com.cybersoft.shop.entity.User;
+import com.cybersoft.shop.entity.UserRole;
 import com.cybersoft.shop.repository.RoleRepository;
 import com.cybersoft.shop.repository.UserRepository;
 import com.cybersoft.shop.request.SignInRequest;
 import com.cybersoft.shop.request.SignUpRequest;
 import com.cybersoft.shop.service.UserService;
-import com.cybersoft.shop.util.JWTHelper;
-import io.jsonwebtoken.Jwts;
+import com.cybersoft.shop.component.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +27,7 @@ public class UserServiceImp implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private JWTHelper jwtHelper;
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public User signUp(SignUpRequest signUpRequest) throws Exception {
@@ -40,24 +40,31 @@ public class UserServiceImp implements UserService {
         User newUser = User.builder()
                 .email(signUpRequest.getEmail())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
+                .build();
+
+        UserRole userRoleLink = UserRole.builder()
+                .user(newUser)
                 .role(userRole)
                 .build();
+
+        newUser.setUserRoles(List.of(userRoleLink));
 
         return userRepository.save(newUser);
     }
 
     @Override
     public String signIn(SignInRequest signInRequest) throws Exception {
-        String token = "";
         Optional<User> optionalUser = userRepository.findByEmail(signInRequest.getEmail());
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
             if(passwordEncoder.matches(signInRequest.getPassword(),user.getPassword())){
-                token = jwtHelper.generateToken(user.getEmail());
+
+                String accessToken = "Bearer " + jwtTokenUtil.generateAccessToken(user);
+
+                return accessToken;
             }
         }
-
-        return token;
+        throw new RuntimeException("Invalid email or password");
     }
 
     @Override

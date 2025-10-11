@@ -3,7 +3,7 @@ package com.cybersoft.shop.mapper;
 import com.cybersoft.shop.entity.Category;
 import com.cybersoft.shop.request.CategoryCreateRequest;
 import com.cybersoft.shop.request.CategoryUpdateRequest;
-import com.cybersoft.shop.response.CategoryResponse;
+import com.cybersoft.shop.response.category.CategoryResponse;
 
 public class CategoryMapper {
 
