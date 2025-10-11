@@ -1,6 +1,5 @@
 package com.cybersoft.shop.service;
 
-import com.cybersoft.shop.dto.UserDTO;
 import com.cybersoft.shop.entity.User;
 import com.cybersoft.shop.request.SignInRequest;
 import com.cybersoft.shop.request.SignUpRequest;
