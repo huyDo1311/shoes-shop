@@ -1,4 +1,4 @@
-package com.cybersoft.shop.service.Imp;
+package com.cybersoft.shop.service.imp;
 
 import com.cybersoft.shop.entity.Brand;
 import com.cybersoft.shop.repository.BrandRepository;

@@ -1,4 +1,4 @@
-package com.cybersoft.shop.service.Imp;
+package com.cybersoft.shop.service.imp;
 
 import com.cybersoft.shop.dto.UserDTO;
 import com.cybersoft.shop.entity.Role;
