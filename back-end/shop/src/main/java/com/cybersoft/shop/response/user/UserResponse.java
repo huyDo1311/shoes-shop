@@ -28,17 +28,21 @@ public class UserResponse {
 
     private String avatar;
 
-    private String role;
+    private List<String> roles;
 
-    public static UserResponse fromUser(User user) {
+    public static UserResponse toDTOUser(User user) {
+        List<String> roleNames = new ArrayList<>();
+
+        if (user.getUserRoles() != null) {
+            roleNames = user.getUserRoles()
+                    .stream()
+                    .map(userRole -> userRole.getRole().getRoleName())
+                    .toList();
+        }
         return UserResponse.builder()
-                .email(user.getEmail())
                 .userName(user.getUserName())
-                .dateOfBirth(user.getDateOfBirth())
-                .address(user.getAddress())
-                .phone(user.getPhone())
-                .avatar(user.getAvatar())
-                .role(user.getRole().getRoleName())
+                .email(user.getEmail())
+                .roles(roleNames)
                 .build();
     }
 }

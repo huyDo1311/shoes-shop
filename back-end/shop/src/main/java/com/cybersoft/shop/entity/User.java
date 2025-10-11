@@ -44,10 +44,10 @@ public class User {
     @Builder.Default
     private String avatar = "";
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserRole> userRoles;
 
-    @ManyToOne
-    @JoinColumn( name = "role_id")
-    private Role role;
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private RefreshToken refreshToken;
 
 }
