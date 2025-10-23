@@ -74,17 +74,7 @@ public class RefreshTokenServiceImp implements RefreshTokenService {
 
         User user = refreshToken.getUser();
 
-        // 1️⃣ Tạo access token mới
         String newAccessToken = "Bearer " + jwtTokenUtil.generateAccessToken(user);
-
-        // 2️⃣ Tạo refresh token mới (xoá cũ để chống reuse)
-//        refreshTokenRepository.delete(refreshToken);
-//        RefreshToken newRefreshToken = RefreshToken.builder()
-//                .refreshToken(UUID.randomUUID().toString())
-//                .refreshExpirationDate(LocalDateTime.now().plusDays(7))
-//                .user(user)
-//                .build();
-//        refreshTokenRepository.save(newRefreshToken);
 
         refreshToken.setRefreshToken(UUID.randomUUID().toString());
         refreshToken.setRefreshExpirationDate(LocalDateTime.now().plusSeconds(ACCESS_REFRESH_EXPIRATION));

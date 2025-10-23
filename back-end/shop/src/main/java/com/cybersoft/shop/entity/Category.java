@@ -1,7 +1,10 @@
 package com.cybersoft.shop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,5 +18,10 @@ public class Category {
 
     @Column(nullable = false, length = 100)
     private String categoryName;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Product> products;
+
 
 }

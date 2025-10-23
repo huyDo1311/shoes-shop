@@ -1,7 +1,10 @@
 package com.cybersoft.shop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -16,4 +19,9 @@ public class Brand {
 
     @Column(nullable = false, length = 50)
     private String brandName;
+
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Product> products;
+
 }
