@@ -1,5 +1,7 @@
 package com.cybersoft.shop.response;
 
+import com.cybersoft.shop.entity.Brand;
+import com.cybersoft.shop.entity.Category;
 import lombok.*;
 
 @Getter @Setter
@@ -8,4 +10,11 @@ import lombok.*;
 public class CategoryResponse {
     private int id;
     private String categoryName;
+
+    public static CategoryResponse toDTO(Category category){
+        return  CategoryResponse.builder()
+                .id(category.getId())
+                .categoryName(category.getCategoryName())
+                .build();
+    }
 }

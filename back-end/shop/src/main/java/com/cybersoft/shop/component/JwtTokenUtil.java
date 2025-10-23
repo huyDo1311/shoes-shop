@@ -79,7 +79,6 @@ public class JwtTokenUtil {
         } catch (Exception e) {
             logger.error("Unexpected error during token validation: {}", e.getMessage());
         }
-
         return false;
     }
 

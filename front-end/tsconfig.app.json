@@ -29,7 +29,11 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "ignoreDeprecations": "6.0",
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
   },
-  "include": ["src"]
+  "include": ["src"],
 }
