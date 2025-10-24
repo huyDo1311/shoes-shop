@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import NoDataState from "./NoDataState";
+import type { Product } from "@/types/product.type";
 
 export const ProductCard = ({ product }: { product: Product }) => {
   const navigate = useNavigate();
@@ -18,8 +19,8 @@ export const ProductCard = ({ product }: { product: Product }) => {
       className="space-y-3  border rounded-sm border-slate-400"
     >
       <img
-        src={product.avatar}
-        alt={product.name}
+        src={product.thumbnail ?? 'hinh'}
+        alt={product.productName}
         className="w-full cursor-pointer  object-cover aspect-square rounded-sm "
       />
       <div className="space-y-3 px-3 py-2">
@@ -27,10 +28,10 @@ export const ProductCard = ({ product }: { product: Product }) => {
           <Tooltip>
             <TooltipTrigger>
               <p className="text-slate-950 text-start dark:text-slate-100 font-semibold line-clamp-1">
-                {product.name}
+                {product.productName}
               </p>
             </TooltipTrigger>
-            <TooltipContent>{product.name}</TooltipContent>
+            <TooltipContent>{product.productName}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
         <p className="text-amber-600 font-normal text-lg font-beViet">
@@ -38,11 +39,11 @@ export const ProductCard = ({ product }: { product: Product }) => {
         </p>
         <div className="flex items-center justify-between px-2">
           <Badge variant="outline" className="border border-zinc-700">
-            <p>{product.colorName}</p>
+            <p>{product.productName}</p>
           </Badge>
-          <Badge variant="secondary">
+          {/* <Badge variant="secondary">
             <p>{product.sizes?.length} Sizes</p>
-          </Badge>
+          </Badge> */}
         </div>
       </div>
     </div>

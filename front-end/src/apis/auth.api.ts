@@ -9,15 +9,13 @@ export const URL_SIGNOUT = 'users/sign-out'
 export const URL_REFRESH_TOKEN = 'users/refresh-token'
 
 const authApi = {
-  signup(body: { email: string; password: string }) {
-    return http.post<AuthResponse>(URL_SIGNUP, body)
-  },
-  signin(body: { email: string; password: string }) {
-    return http.post<AuthResponse>(URL_SIGNIN, body)
-  },
-  signout() {
-    return http.post(URL_SIGNOUT)
-  }
+  signup: (body: { email: string; password: string }) =>
+    http.post<AuthResponse>(URL_SIGNUP, body),
+
+  signin: (body: { email: string; password: string }) =>
+    http.post<AuthResponse>(URL_SIGNIN, body),
+
+  signout: () => http.post(URL_SIGNOUT),
 }
 
 export default authApi

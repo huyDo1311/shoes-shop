@@ -1,12 +1,11 @@
 package com.cybersoft.shop.response.product;
 
-import com.cybersoft.shop.entity.Brand;
-import com.cybersoft.shop.entity.Category;
 import com.cybersoft.shop.entity.Product;
 import com.cybersoft.shop.entity.ProductImage;
 import com.cybersoft.shop.response.BaseResponse;
 import com.cybersoft.shop.response.BrandResponse;
 import com.cybersoft.shop.response.CategoryResponse;
+import com.cybersoft.shop.response.variant.VariantResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -24,13 +23,11 @@ public class ProductResponse extends BaseResponse {
     private Float price;
     private String thumbnail;
     private String description;
-    private int categoryId;
     private CategoryResponse category;
-    private int brandId;
     private BrandResponse brand;
-//    private List<VariantDTO> variantDTOS;
 
-    @JsonProperty("product_images")
+    @JsonProperty("variant")
+    private List<VariantResponse> variantResponses;
     private List<ProductImage> productImages = new ArrayList<>();
 
     public static ProductResponse toDTO(Product product) {
@@ -43,13 +40,40 @@ public class ProductResponse extends BaseResponse {
                 .category(CategoryResponse.toDTO(product.getCategory()))
                 .price(product.getPrice())
                 .brand(BrandResponse.toDTO(product.getBrand()))
-                .categoryId(product.getCategory().getId())
-                .brandId(product.getBrand().getId())
                 .build();
         productResponse.setCreatedAt(product.getCreatedAt());
         productResponse.setUpdatedAt(product.getUpdatedAt());
         return productResponse;
     }
 
+
+    public  static  ProductResponse toProductWithVariantDTO(Product product){
+
+//        ProductResponse productDTO = ProductResponse.toDTO(product);
+//
+//        List<String> sizes = product.getVariants().stream()
+//                .map(item -> String.valueOf(item.getSize().getSizeValue()))
+//                .distinct()
+//                .toList();
+//        productDTO.setSize(sizes);
+//
+//        List<String> colors = product.getVariants().stream()
+//                .map(item -> item.getColor().getColorName())
+//                .distinct()
+//                .toList();
+//        productDTO.setColor(colors);
+
+        // Tạo ProductResponse cơ bản
+        ProductResponse productDTO = ProductResponse.toDTO(product);
+
+        // Map danh sách variant
+        List<VariantResponse> variantResponses = product.getVariants().stream()
+                .map(VariantResponse::toDTO)
+                .toList();
+
+        productDTO.setVariantResponses(variantResponses);
+
+        return productDTO;
+    }
 
 }

@@ -39,8 +39,8 @@ public class ProductController {
     public ResponseEntity<?> getProducts(
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "brand", required = false) String brand,
-            @RequestParam(value = "color", required = false) List<Long> color,
-            @RequestParam(value = "size", required = false) List<String> size,
+            @RequestParam(value = "color", required = false) List<Integer> color,
+            @RequestParam(value = "size", required = false) List<Integer> size,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "minPrice", required = false) Double minPrice,
             @RequestParam(value = "maxPrice", required = false) Double maxPrice,
@@ -67,7 +67,7 @@ public class ProductController {
         List<ProductResponse> productResponses = productsPage
                 .getContent()
                 .stream()
-                .map(ProductResponse::toDTO)
+                .map(ProductResponse::toProductWithVariantDTO)
                 .toList();
 
         ProductListResponse productListResponse = ProductListResponse.builder()
@@ -89,17 +89,17 @@ public class ProductController {
     @PostMapping("/generateFakeLikes")
     public ResponseEntity<String> generateFakeLikes() {
         Faker faker = new Faker();
-        for(int i=0; i<1_000_000; i++){
+        for(int i=0; i<1000; i++){
             String productName = faker.commerce().productName();
             if(productService.existsByProductName(productName)){
                 continue;
             }
             ProductRequest productRequest = ProductRequest.builder()
                     .productName(productName)
-                    .price((float)faker.number().numberBetween(10, 50_000_000))
+                    .price((float)faker.number().numberBetween(100_000, 2_000_000))
                     .description(faker.lorem().sentence())
-                    .categoryId(faker.number().numberBetween(1,3))
-                    .brandId(faker.number().numberBetween(1,3))
+                    .categoryId(faker.number().numberBetween(1,5))
+                    .brandId(faker.number().numberBetween(1,5))
                     .build();
             try {
                 productService.createProduct(productRequest);

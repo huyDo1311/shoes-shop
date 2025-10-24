@@ -55,7 +55,6 @@ declare type CartItem = {
 declare type Category = {
   id: number;
   name: string;
-  image: string;
 };
 
 declare type variationsTotal = Record<any, string[]>;
@@ -63,7 +62,6 @@ declare type variationsTotal = Record<any, string[]>;
 declare type Brand = {
   id: number;
   name: string;
-  image?: string;
 };
 
 declare type Product = {

@@ -39,7 +39,7 @@ public class ProductSpecification {
         };
     }
 
-    public static Specification<Product> hasColor(List<Long> colorIds) {
+    public static Specification<Product> hasColor(List<Integer> colorIds) {
         return (root, query, cb) -> {
             if (colorIds == null || colorIds.isEmpty()) {
                 return cb.conjunction();
@@ -52,14 +52,27 @@ public class ProductSpecification {
         };
     }
 
-    public static Specification<Product> hasSizes(List<String> sizes) {
+//    public static Specification<Product> hasSizes(List<String> sizes) {
+//        return (root, query, cb) -> {
+//            if (sizes == null || sizes.isEmpty()) {
+//                return cb.conjunction();
+//            }
+//
+//            Join<Product, Variant> variantJoin = root.join("variants");
+//            Predicate predicate = variantJoin.get("size").get("value").in(sizes);
+//            query.distinct(true);
+//            return predicate;
+//        };
+//    }
+
+    public static Specification<Product> hasSizes(List<Integer> sizeIds) {
         return (root, query, cb) -> {
-            if (sizes == null || sizes.isEmpty()) {
+            if (sizeIds == null || sizeIds.isEmpty()) {
                 return cb.conjunction();
             }
 
             Join<Product, Variant> variantJoin = root.join("variants");
-            Predicate predicate = variantJoin.get("size").get("value").in(sizes);
+            Predicate predicate = variantJoin.get("size").get("id").in(sizeIds);
             query.distinct(true);
             return predicate;
         };

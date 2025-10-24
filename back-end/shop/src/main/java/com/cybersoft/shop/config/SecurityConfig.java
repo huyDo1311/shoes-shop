@@ -43,7 +43,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers("/users/**").permitAll();
                     request.requestMatchers("/products/**").permitAll();
-                    request.requestMatchers("/categories/**").hasRole("ADMIN");
+                    request.requestMatchers("/categories/**").permitAll();
+                    request.requestMatchers("/brands/**").permitAll();
+                    request.requestMatchers("/colors/**").permitAll();
+                    request.requestMatchers("/sizes/**").permitAll();
+                    request.requestMatchers("/variants/**").permitAll();
                 })
                 .build();
     }

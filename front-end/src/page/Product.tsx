@@ -2,14 +2,57 @@ import { FilterIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSearchParams } from "react-router-dom";
 import ProductList from "@/components/shared/ProductList";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import SearchForm from "@/components/shared/SearchForm";
+import { useQuery } from "@tanstack/react-query";
+import productApi from "@/apis/product.api";
+import type { SearchType } from "@/types/filter.type";
 
 
 const Product = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   // search form submit
-  const onSubmit = () => {
-    
+  // const onSubmit = (data: SearchType) => {
+  //   // Xóa giá trị rỗng ra khỏi params
+  //   const cleanedData = Object.fromEntries(
+  //     Object.entries(data).filter(([_, v]) => v !== undefined && v !== "" && v !== null)
+  //   );
+
+  //   // Cập nhật URL search params (triggers react-query refetch)
+  //   setSearchParams(cleanedData);
+  // };
+
+  // const onSubmit = (data: SearchType) => {
+  //   console.log("Form values:", data);
+  //   // Xóa giá trị rỗng
+  //   const cleanedData = Object.fromEntries(
+  //     Object.entries(data)
+  //       .filter(([_, v]) => v !== undefined && v !== "" && v !== null)
+  //       .map(([k, v]) => [
+  //         k,
+  //         Array.isArray(v) ? v.join(",") : String(v), // ép tất cả thành string
+  //       ])
+  //   );
+
+  //   setSearchParams(cleanedData);
+  // };
+
+   const onSubmit = (data: SearchType) => {
+    const params = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(data)) {
+      if (value) {
+        if (Array.isArray(value)) {
+          value.forEach((v) => params.append(key, v));
+        } else {
+          params.append(key, value.toString());
+        }
+      }
+    }
+
+    setSearchParams(params);
   };
+
   const paramsValues: Record<string, any> = {};
   for (const [key, value] of searchParams.entries()) {
     if (paramsValues[key]) {
@@ -29,6 +72,15 @@ const Product = () => {
     { id: 4, label: "Price Decs", value: "PriceDESC" },
   ];
 
+  const { data } = useQuery({
+    queryKey: ['products', paramsValues],
+    queryFn: async () => {
+      const result = await productApi.getProducts(paramsValues)
+      return result.data.data
+    }
+  })
+  // console.log('paramsValues', paramsValues)
+  // console.log(data)
 
   const handleSort = (value: string) => {
     if (value !== "") setSearchParams({ ...paramsValues, sort: value });
@@ -40,19 +92,21 @@ const Product = () => {
     }
   };
 
-  // const searchFormRender = () => (
-  //   <SearchForm onSubmit={onSubmit} defaultValues={paramsValues} />
-  // );
+  const searchFormRender = () => (
+    <SearchForm onSubmit={onSubmit} defaultValues={paramsValues} />
+  );
 
   return (
     <section className="py-8">
       <div className="max-w-7xl w-full mx-auto">
-        <h2 className="text-3xl text-center text-slate-950 font-semibold dark:text-white">
-          Your Search Result
-        </h2>
+        {!data &&
+          <h2 className="text-3xl text-center text-slate-950 font-semibold dark:text-white">
+            Your Search Result
+          </h2>
+        }
         <div className="grid grid-cols-10 gap-5 px-3 mt-12">
           <div className="col-span-3 hidden lg:block">
-            {/* {searchFormRender()}{" "} */}
+            {searchFormRender()}{" "}
           </div>
           <div className="col-span-10 lg:col-span-7">
             <div className="flex justify-end space-x-5 lg:hidden  items-center">
@@ -61,13 +115,13 @@ const Product = () => {
                   <FilterIcon className="size-5 lg:hidden block text-slate-800" />
                 </SheetTrigger>
                 <SheetContent className=" lg:hidden block">
-                  {/* {searchFormRender()} */}
+                  {searchFormRender()}
                 </SheetContent>
               </Sheet>
             </div>
 
             <div className="flex mt-5  items-center w-full justify-end">
-              {/* <ToggleGroup
+              <ToggleGroup
                 onValueChange={handleSort}
                 defaultValue={paramsValues.sort ?? null}
                 className="flex gap-3"
@@ -84,21 +138,26 @@ const Product = () => {
                     {sortType.label}
                   </ToggleGroupItem>
                 ))}
-              </ToggleGroup> */}
+              </ToggleGroup>
             </div>
 
             {/*  */}
             <div className="mt-8">
               {/*  */}
-              <ProductList
+              {/* <ProductList
                 className="grid grid-cols-1 sm:grid-cols-3  gap-5"
-                products={[]}
+                products={data?.pages.flatMap((page) => page.content) || []}
+              /> */}
+
+              <ProductList
+                className="grid grid-cols-1 sm:grid-cols-3 gap-5"
+                products={data?.products || []}
               />
 
               {/*    */}
-              
 
-          
+
+
             </div>
           </div>
         </div>
