@@ -12,11 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Variant {
+public class Variant extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String sku;
+
+    private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -29,4 +31,6 @@ public class Variant {
     @ManyToOne
     @JoinColumn(name = "size_id")
     private Size size;
+
+
 }

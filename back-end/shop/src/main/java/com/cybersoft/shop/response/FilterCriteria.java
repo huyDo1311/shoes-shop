@@ -14,8 +14,8 @@ import java.util.List;
 public class FilterCriteria {
     private String category;
     private  String  brand;
-    private  List<Long>  color;
-    private List<String> size;
+    private  List<Integer>  color;
+    private List<Integer> size;
     private String keyword;
     private Double minPrice;
     private Double maxPrice;

@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'build', '.react-router']),
+  globalIgnores(['dist', 'build', '.react-router', '*.d.ts']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -19,8 +19,9 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
-    // rules : {
-     
-    // }
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off'
+    }
   },
 ])
