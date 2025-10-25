@@ -9,7 +9,7 @@ const URL_PRODUCT = 'products'
 const productApi = {
   getProducts: (params: ProductListParam) => http.get<SuccessResponse<ProductListType>>(URL_PRODUCT, {params}),
   getProductDetail: (id: string) => http.get<SuccessResponse<Product>>(`${URL_PRODUCT}/${id}`),
-  searchProductName: (name: string) => http.get<SuccessResponse<Product[]>>(`${URL_PRODUCT}/search`, {params: {name}})
+  searchProductName: (name: string) => http.get<SuccessResponse<Product[]>>(`${URL_PRODUCT}/search`, {params: {name}}),
 }
 
 export default productApi

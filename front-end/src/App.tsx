@@ -8,6 +8,8 @@ import SignUp from '@/page/SignUp'
 import AuthLayout from '@/layout/AuthLayout';
 import { adminNavbar, userNavbar } from "./data";
 import Product from '@/page/Product';
+import ProductDetails from '@/page/ProductDetails';
+
 
 function App() {
   const router = createBrowserRouter([
@@ -30,6 +32,10 @@ function App() {
         {
           path: "/product",
           element: <Product />,
+        },
+        {
+          path: "/product/:id",
+          element: <ProductDetails />,
         },
         // {
         //   element: <CartLayout />,
