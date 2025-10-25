@@ -10,7 +10,7 @@ const Searchbar = () => {
       return;
     }
 
-    navigate(`/search?keyword=${text}`);
+    navigate(`/product?keyword=${text}`);
   };
   return (
     <div className=" w-full">

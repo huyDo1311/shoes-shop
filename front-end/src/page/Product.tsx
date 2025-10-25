@@ -4,40 +4,19 @@ import { useSearchParams } from "react-router-dom";
 import ProductList from "@/components/shared/ProductList";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import SearchForm from "@/components/shared/SearchForm";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import productApi from "@/apis/product.api";
 import type { SearchType } from "@/types/filter.type";
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import type { ProductListType } from "@/types/product.type";
+
 
 
 const Product = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  // search form submit
-  // const onSubmit = (data: SearchType) => {
-  //   // Xóa giá trị rỗng ra khỏi params
-  //   const cleanedData = Object.fromEntries(
-  //     Object.entries(data).filter(([_, v]) => v !== undefined && v !== "" && v !== null)
-  //   );
-
-  //   // Cập nhật URL search params (triggers react-query refetch)
-  //   setSearchParams(cleanedData);
-  // };
-
-  // const onSubmit = (data: SearchType) => {
-  //   console.log("Form values:", data);
-  //   // Xóa giá trị rỗng
-  //   const cleanedData = Object.fromEntries(
-  //     Object.entries(data)
-  //       .filter(([_, v]) => v !== undefined && v !== "" && v !== null)
-  //       .map(([k, v]) => [
-  //         k,
-  //         Array.isArray(v) ? v.join(",") : String(v), // ép tất cả thành string
-  //       ])
-  //   );
-
-  //   setSearchParams(cleanedData);
-  // };
-
-   const onSubmit = (data: SearchType) => {
+  const { ref, inView } = useInView();
+  const onSubmit = (data: SearchType) => {
     const params = new URLSearchParams();
 
     for (const [key, value] of Object.entries(data)) {
@@ -72,15 +51,49 @@ const Product = () => {
     { id: 4, label: "Price Decs", value: "PriceDESC" },
   ];
 
-  const { data } = useQuery({
-    queryKey: ['products', paramsValues],
-    queryFn: async () => {
-      const result = await productApi.getProducts(paramsValues)
-      return result.data.data
+  // const { data } = useQuery({
+  //   queryKey: ['products', paramsValues],
+  //   queryFn: async () => {
+  //     const result = await productApi.getProducts(paramsValues)
+  //     return result.data.data
+  //   }
+  // })
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+  } = useInfiniteQuery<ProductListType>({
+    queryKey: ["products", paramsValues],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const res = await productApi.getProducts({
+        ...paramsValues,
+        page: pageParam as number,
+      });
+      // trả về data bên trong API
+      return res.data.data;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const totalPages = Math.ceil(lastPage.pagination.page_size / lastPage.pagination.limit);
+      const nextPage = allPages.length + 1;
+      return nextPage <= totalPages ? nextPage : undefined;
+    },
+  });
+
+
+
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
     }
-  })
-  // console.log('paramsValues', paramsValues)
-  // console.log(data)
+  }, [inView, hasNextPage, fetchNextPage]);
+
+  if (isError) return <div>Error</div>;
 
   const handleSort = (value: string) => {
     if (value !== "") setSearchParams({ ...paramsValues, sort: value });
@@ -151,12 +164,16 @@ const Product = () => {
 
               <ProductList
                 className="grid grid-cols-1 sm:grid-cols-3 gap-5"
-                products={data?.products || []}
+                // products={data?.products || []}
+                products={data?.pages.flatMap((page) => page.products) || []}
               />
 
               {/*    */}
 
+              {(isLoading || isFetchingNextPage) && <div>Loading...</div>}
 
+              {/* ref để theo dõi scroll */}
+              <span ref={ref}></span>
 
             </div>
           </div>
