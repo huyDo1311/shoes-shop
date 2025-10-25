@@ -1,3 +1,4 @@
+import type { Variant } from '@/types/variant.type'
 import type { NumberMap } from 'framer-motion'
 
 export interface Product {
@@ -13,15 +14,14 @@ export interface Product {
     id: number
     brandName: string
   }
-  size: string[]
-  color: string[]
+  variant: Variant[]
   created_at: string
   updated_at: string
   productName: string
   productImages: string[]
 }
 
-export interface ProductList {
+export interface ProductListType {
   products: Product[]
   pagination: {
     page: number
