@@ -10,6 +10,7 @@ import com.cybersoft.shop.repository.CategoryRepository;
 import com.cybersoft.shop.repository.ProductRepository;
 import com.cybersoft.shop.request.ProductRequest;
 import com.cybersoft.shop.response.FilterCriteria;
+import com.cybersoft.shop.response.product.ProductResponse;
 import com.cybersoft.shop.service.ProductService;
 import com.cybersoft.shop.specification.ProductSpecification;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
@@ -102,4 +104,24 @@ public class ProductServiceImp implements ProductService {
 
         return PageRequest.of(page, sizePerPage,sort);
     }
+
+    @Override
+    public ResponseEntity<?> getBySearch(String name) {
+        Specification<Product> spec = ProductSpecification.hasKeyword(name);
+
+        List<ProductResponse> products = productRepository.findAll(spec)
+                .stream().map(ProductResponse::toDTO).toList();
+
+        return  ResponseEntity.ok(products);
+    }
+
+    @Override
+    public Product getById(Integer id) {
+        var existing = productRepository.findById(id).orElseThrow(
+                ()-> new EntityNotFoundException("Not Found")
+        );
+
+        return existing;
+    }
+
 }

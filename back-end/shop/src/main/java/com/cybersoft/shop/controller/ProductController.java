@@ -86,6 +86,24 @@ public class ProductController {
                 .build());
     }
 
+    @GetMapping("/search")
+    public  ResponseEntity<?> getSearch(@RequestParam(value = "name") String name  ){
+        return  productService.getBySearch(name);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable("id") Integer id){
+        Product product = productService.getById(id);
+        ProductResponse productResponse = ProductResponse.toProductWithVariantDTO(product);
+
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Find product successfully")
+                        .status(200)
+                        .data(productResponse)
+                        .build());
+    }
+
     @PostMapping("/generateFakeLikes")
     public ResponseEntity<String> generateFakeLikes() {
         Faker faker = new Faker();
