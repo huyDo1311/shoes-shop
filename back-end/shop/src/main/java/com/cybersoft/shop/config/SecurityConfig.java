@@ -48,6 +48,7 @@ public class SecurityConfig {
                     request.requestMatchers("/colors/**").permitAll();
                     request.requestMatchers("/sizes/**").permitAll();
                     request.requestMatchers("/variants/**").permitAll();
+                    request.requestMatchers("/orders/**").permitAll();
                 })
                 .build();
     }
