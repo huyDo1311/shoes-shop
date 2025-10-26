@@ -1,11 +1,13 @@
 package com.cybersoft.shop.request;
 
+import com.cybersoft.shop.entity.ProductImage;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import java.util.List;
 
 @Data//toString
 @Getter
@@ -25,11 +27,10 @@ public class ProductRequest {
     private String thumbnail;
 
     private String description;
-
-    @JsonProperty("category_id")
+    
     private int categoryId;
 
-    @JsonProperty("brand_id")
     private int brandId;
 
+    private List<ProductImage> productImages;
 }

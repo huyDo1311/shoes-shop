@@ -8,7 +8,17 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+  servlet:
+    multipart:
+      max-file-size: 4MB
+      max-request-size: 4MB
+
+cloudinary:
+  cloud-name: dxsq3ivxs
+  api-key: 393271661348597
+  api-secret: 2uoNOu66wnJLU8utPTSTKV26IWk
+  folder: shop/products
 
 jwt:
   expiration:     # 1 * 24 * 60 * 60 = giay
