@@ -52,18 +52,6 @@ public class ProductSpecification {
         };
     }
 
-//    public static Specification<Product> hasSizes(List<String> sizes) {
-//        return (root, query, cb) -> {
-//            if (sizes == null || sizes.isEmpty()) {
-//                return cb.conjunction();
-//            }
-//
-//            Join<Product, Variant> variantJoin = root.join("variants");
-//            Predicate predicate = variantJoin.get("size").get("value").in(sizes);
-//            query.distinct(true);
-//            return predicate;
-//        };
-//    }
 
     public static Specification<Product> hasSizes(List<Integer> sizeIds) {
         return (root, query, cb) -> {
