@@ -3,6 +3,7 @@ package com.cybersoft.shop.service.imp;
 import com.cybersoft.shop.entity.Brand;
 import com.cybersoft.shop.entity.Category;
 import com.cybersoft.shop.entity.Product;
+import com.cybersoft.shop.entity.ProductImage;
 import com.cybersoft.shop.enums.SortType;
 import com.cybersoft.shop.repository.BrandRepository;
 import com.cybersoft.shop.repository.CategoryRepository;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImp implements ProductService {
@@ -47,6 +50,18 @@ public class ProductServiceImp implements ProductService {
                 .category(existingCategory)
                 .build();
 
+        if (productRequest.getProductImages() != null && !productRequest.getProductImages().isEmpty()) {
+            List<ProductImage> images = productRequest.getProductImages().stream()
+                    .map(imgReq -> {
+                        ProductImage img = new ProductImage();
+                        img.setImageUrl(imgReq.getImageUrl());
+                        img.setProduct(newProduct);
+                        return img;
+                    })
+                    .toList();
+
+            newProduct.setProductImages(images);
+        }
         return productRepository.save(newProduct);
     }
 
@@ -87,5 +102,4 @@ public class ProductServiceImp implements ProductService {
 
         return PageRequest.of(page, sizePerPage,sort);
     }
-
 }
