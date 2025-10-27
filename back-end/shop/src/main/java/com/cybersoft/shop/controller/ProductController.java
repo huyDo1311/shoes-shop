@@ -2,13 +2,15 @@ package com.cybersoft.shop.controller;
 
 import com.cybersoft.shop.entity.Product;
 import com.cybersoft.shop.enums.SortType;
-import com.cybersoft.shop.request.ProductRequest;
+import com.cybersoft.shop.request.ProductCreateRequest;
+import com.cybersoft.shop.request.ProductUpdateRequest;
 import com.cybersoft.shop.response.FilterCriteria;
 import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.response.product.ProductListResponse;
 import com.cybersoft.shop.response.product.ProductResponse;
 import com.cybersoft.shop.service.ProductService;
 import com.github.javafaker.Faker;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -25,8 +27,8 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<?> createProduct(@RequestBody ProductRequest productRequest){
-        Product newProduct = productService.createProduct(productRequest);
+    public ResponseEntity<?> createProduct(@RequestBody ProductCreateRequest productCreateRequest){
+        Product newProduct = productService.createProduct(productCreateRequest);
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .message("Create new product successfully")
@@ -104,6 +106,29 @@ public class ProductController {
                         .build());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") int id,
+                                           @Valid @RequestBody ProductUpdateRequest req) {
+        Product updated = productService.updateProduct(id, req);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Update product successfully")
+                        .status(HttpStatus.OK.value())
+                        .data(updated)
+                        .build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable("id") int id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Delete product successfully")
+                        .status(HttpStatus.OK.value())
+                        .data(null)
+                        .build());
+    }
+
     @PostMapping("/generateFakeLikes")
     public ResponseEntity<String> generateFakeLikes() {
         Faker faker = new Faker();
@@ -112,7 +137,7 @@ public class ProductController {
             if(productService.existsByProductName(productName)){
                 continue;
             }
-            ProductRequest productRequest = ProductRequest.builder()
+            ProductCreateRequest productCreateRequest = ProductCreateRequest.builder()
                     .productName(productName)
                     .price((float)faker.number().numberBetween(100_000, 2_000_000))
                     .description(faker.lorem().sentence())
@@ -120,7 +145,7 @@ public class ProductController {
                     .brandId(faker.number().numberBetween(1,5))
                     .build();
             try {
-                productService.createProduct(productRequest);
+                productService.createProduct(productCreateRequest);
             }catch (Exception e){
                 return ResponseEntity.badRequest().body(e.getMessage());
             }

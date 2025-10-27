@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface FileService {
+    String sanitizeBaseName(String originalName);
+
     String generateFileName(MultipartFile multipartFile);
 
     ResponseEntity<?> upload(MultipartFile multipartFile);

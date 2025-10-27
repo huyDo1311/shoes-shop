@@ -19,6 +19,13 @@ public class FileServiceImp implements FileService {
     private Cloudinary cloudinary;
 
     @Override
+    public String sanitizeBaseName(String originalName){
+        String name = Objects.requireNonNull(originalName).replace(" ", "-");
+        int dot = name.lastIndexOf('.');
+        return (dot > 0) ? name.substring(0, dot) : name;
+    }
+
+    @Override
     public String generateFileName(MultipartFile multipartFile) {
         return new Date().getTime() + "-" +
                 Objects.requireNonNull(multipartFile.getOriginalFilename())
@@ -38,35 +45,47 @@ public class FileServiceImp implements FileService {
 
     @Override
     public FileUploadResponse getFileUploadResponse(MultipartFile multipartFile) throws IOException {
-        String fileName = generateFileName(multipartFile);
-        Map uploadResult = cloudinary.uploader()
-                .upload(multipartFile.getBytes(),
+        String originalName = Objects.requireNonNull(multipartFile.getOriginalFilename())
+                .replace(" ", "-");
+        int dot = originalName.lastIndexOf('.');
+        String baseName = (dot > 0) ? originalName.substring(0, dot) : originalName;
+
+        String publicId = System.currentTimeMillis() + "-" + baseName;
+
+        Map uploadResult = cloudinary.uploader().upload(
+                multipartFile.getBytes(),
                 ObjectUtils.asMap(
-                        "public_id", fileName,
+                        "public_id", publicId,
                         "folder", "shoes_shop",
                         "resource_type", "auto"
                 )
         );
-        String publicUrl = (String) uploadResult.get("secure_url");
+
+        String secureUrl = (String) uploadResult.get("secure_url");
+        String returnedPublicId = (String) uploadResult.get("public_id");
+        String format = (String) uploadResult.get("format");
+
         return FileUploadResponse.builder()
                 .size(multipartFile.getSize())
-                .publicUrl(publicUrl)
-                .fileName(fileName)
+                .publicUrl(secureUrl)
+                .fileName(returnedPublicId + "." + format)
                 .uploadTime(System.currentTimeMillis())
                 .build();
     }
 
     @Override
     public ResponseEntity<?> uploadMultiple(List<MultipartFile> files) {
-        List<FileUploadResponse> responses = new ArrayList<>();
+        List<FileUploadResponse> responses = new ArrayList<>(files.size());
+
         for (MultipartFile file : files) {
             try {
-                FileUploadResponse response = getFileUploadResponse(file);
-                responses.add(response);
-            } catch (Exception e) {
-                throw new RuntimeException("Upload file failed");
+                FileUploadResponse resp = getFileUploadResponse(file);
+                responses.add(resp);
+            } catch (Exception ex) {
+                throw new RuntimeException("Upload file failed: " + file.getOriginalFilename(), ex);
             }
         }
+
         return new ResponseEntity<>(responses, HttpStatus.CREATED);
     }
 }
