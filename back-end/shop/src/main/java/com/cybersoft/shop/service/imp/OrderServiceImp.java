@@ -187,13 +187,23 @@ public class OrderServiceImp implements OrderService {
             var v = variantBySku.get(i.getVariantSku());
             int productId = 0;
             String productname = null;
-            String imageUrl = null;
+            String imageUrl = "";
+            int sizeValue = 0;
+            String colorName = "";
 
             if(v != null && v.getProduct() != null){
                 var p = v.getProduct();
                 productId = p.getId();
                 productname = p.getProductName();
-                imageUrl = p.getThumbnail();
+                imageUrl = p.getThumbnail() != null ? p.getThumbnail() : "";
+            }
+            var c = v.getColor();
+            if(c != null){
+                colorName = c.getColorName() != null ? c.getColorName(): "";
+            }
+            var s = v.getSize();
+            if(s != null){
+                sizeValue = s.getSizeValue();
             }
             var lineTotal = i.getPrice()*i.getQuantity();
 
@@ -203,6 +213,8 @@ public class OrderServiceImp implements OrderService {
                     .productId(productId)
                     .productName(productname)
                     .imageUrl(imageUrl)
+                    .colorName(colorName)
+                    .sizeValue(sizeValue)
                     .quantity(i.getQuantity())
                     .price(i.getPrice())
                     .lineTotal(lineTotal)

@@ -17,6 +17,9 @@ public class OrderItemResponse {
     private String productName;
     private String imageUrl;
 
+    private String colorName;
+    private int sizeValue;
+
     private int quantity;
     private float price;
     private float lineTotal;
