@@ -18,6 +18,6 @@ public interface VariantRepository extends JpaRepository<Variant, String> {
 
 
 
-    @EntityGraph(attributePaths = {"product"})
+    @EntityGraph(attributePaths = {"product", "color", "size"})
     List<Variant> findBySkuIn(Collection<String> skus);
 }
