@@ -2,10 +2,7 @@ package com.cybersoft.shop.controller;
 
 import com.cybersoft.shop.entity.Order;
 import com.cybersoft.shop.entity.Variant;
-import com.cybersoft.shop.request.CartAddRequest;
-import com.cybersoft.shop.request.CartUpdateQuantityRequest;
-import com.cybersoft.shop.request.OrderStatusUpdateRequest;
-import com.cybersoft.shop.request.VariantRequest;
+import com.cybersoft.shop.request.*;
 import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.response.order.OrderResponse;
 import com.cybersoft.shop.service.OrderService;
@@ -32,9 +29,9 @@ public class OrderController {
                         .build());
     }
 
-    @GetMapping("/cart")
-    public ResponseEntity<?> getCart(@RequestParam("email") String email) {
-        OrderResponse data = orderService.getCart(email);
+    @PostMapping("/cart/get")
+    public ResponseEntity<?> getCart(@RequestBody GetCartRequest getCartRequest) {
+        OrderResponse data = orderService.getCart(getCartRequest.getEmail());
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .message("Get cart successfully")

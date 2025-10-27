@@ -63,7 +63,7 @@ const ProductDetails = () => {
       )?.quantity
       : 0;
 
-  console.log(currentStock);
+  // console.log(currentStock);
 
   return (
     isSuccess && (
@@ -190,7 +190,7 @@ const ProductDetails = () => {
               {/* 🛒 Nút Add to Cart */}
               <AddToCart
                 quantity={selectedQuantity}
-                variant={
+                sku={
                   selectedColor && selectedSize
                     ? product.variant.find(
                       (v: any) =>
