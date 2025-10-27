@@ -15,6 +15,8 @@ export interface CartItem {
   quantity: number;
   price: number;
   lineTotal: number;
+  colorName: string;
+  sizeValue: number
 }
 
 export interface Cart {

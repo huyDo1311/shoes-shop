@@ -3,33 +3,43 @@ import { ShoppingCartIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useContext } from "react";
 import AuthContext from "@/context/AuthContext";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orderAPI } from "@/apis/order.api";
+import { toast } from "sonner";
 
 export type AddToCartProps = {
   quantity: number;
   sku?: string | null;
-  email?: string 
+  email?: string
 };
 
 const AddToCart = ({ quantity, sku }: AddToCartProps) => {
   const { currentUser } = useAuth();
   const email = currentUser?.email;
+  const queryClient = useQueryClient();
 
   const addToCartMutation = useMutation({
     mutationFn: (body: AddToCartProps) => orderAPI.addToCart(body),
     onSuccess: (result) => {
       const cart = result.data.data;
-    }
+      const sortedItems = [...(cart?.items || [])].sort((a, b) => a.id - b.id);
+      const newItem = sortedItems[sortedItems.length - 1];
+
+      toast.success(
+        `Added "${newItem?.productName || 'item'}" to cart successfully!`,
+        { description: `Quantity: ${newItem?.quantity}` }
+      );
+      queryClient.invalidateQueries({ queryKey: ["cart", email] });
+    },
   })
- 
+
   const onsubmit = () => {
     addToCartMutation.mutate({
       quantity: quantity,
       sku: sku,
       email: email
     })
-   }
+  }
 
   return (
     <Button

@@ -13,10 +13,11 @@ import { ShoppingCartIcon, XIcon } from "lucide-react";
 
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { orderAPI } from "@/apis/order.api";
 import { useEffect } from "react";
 import type { Cart } from "@/types/order.type";
+import DeleteService from "@/components/shared/DeleteService";
 
 
 const ToggleCart = () => {
@@ -24,17 +25,15 @@ const ToggleCart = () => {
   const {currentUser} = useAuth();
   const email = currentUser?.email;
 
-  const getCartMutation = useMutation({
-    mutationFn: (body: {email: string}) => orderAPI.getCart(body)
-  })
-
-    useEffect(() => {
-    if (email) {
-      getCartMutation.mutate({ email });
-    }
-  }, [email]);
-
-  const { data, isPending, isError, } = getCartMutation;
+    const {
+    data,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["cart", email], // 👈 key gắn với email
+    queryFn: () => orderAPI.getCart({ email: email as string }),
+    enabled: !!email, // chỉ fetch khi có email
+  });
 
   const cart: Cart | undefined = data?.data.data;
   const items = cart?.items ?? [];
@@ -96,7 +95,7 @@ const ToggleCart = () => {
                         {item.productName}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {/* {item} - {cart.color} */}
+                        {item.sizeValue} - {item.colorName}
                       </p>
                       <p className="text-sm">
                         Quantity :{" "}
@@ -104,15 +103,15 @@ const ToggleCart = () => {
                       </p>
                     </div>
 
-                    {/* <DeleteService
-                      endpoint={`cart/${cart.id}`}
-                      queryKey="/cart/auth"
+                    <DeleteService
+                      sku={`${item.sku}`}
+                      email={`${email}`}
                     >
                       <div className="gap-x-1 max-w-[100px] items-center cursor-pointer flex">
                         <XIcon className="size-4 text-gray-400" />
                         <span className="text-gray-400 text-sm">Remove</span>
                       </div>
-                    </DeleteService> */}
+                    </DeleteService>
                   </div>
                 </div>
                 <p className="text-base text-red-500 font-semibold font-inter">

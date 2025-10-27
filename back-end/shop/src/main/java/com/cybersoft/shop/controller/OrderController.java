@@ -50,9 +50,9 @@ public class OrderController {
                         .build()
         );
     }
-    @DeleteMapping("/cart/items/{sku}")
-    public ResponseEntity<?> removeItem(@PathVariable String sku, @RequestParam("email") String email){
-        OrderResponse data = orderService.removeCartItem(email, sku);
+    @DeleteMapping("/cart/items/delete")
+    public ResponseEntity<?> removeItem(@RequestBody DeleteItemCartRequest deleteItemCartRequest){
+        OrderResponse data = orderService.removeCartItem(deleteItemCartRequest.getEmail(), deleteItemCartRequest.getSku());
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .status(HttpStatus.OK.value())
