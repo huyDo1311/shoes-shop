@@ -2,6 +2,7 @@ package com.cybersoft.shop.controller;
 
 import com.cybersoft.shop.entity.RefreshToken;
 import com.cybersoft.shop.entity.User;
+import com.cybersoft.shop.request.GetUserInfoRequest;
 import com.cybersoft.shop.request.RefreshTokenRequest;
 import com.cybersoft.shop.request.SignInRequest;
 import com.cybersoft.shop.request.SignUpRequest;
@@ -13,6 +14,7 @@ import com.cybersoft.shop.service.RefreshTokenService;
 import com.cybersoft.shop.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +75,19 @@ public class UserController {
         RefreshTokenResponse tokens = refreshTokenService.refreshToken(refreshTokenRequest.getRefreshToken());
 
         return ResponseEntity.ok(tokens);
+    }
+
+    @PostMapping("/info")
+    public  ResponseEntity<?> getUserInfo(@Valid @RequestBody GetUserInfoRequest request){
+
+        UserResponse userResponse = userService.getInfo(request.getEmail());
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK.value())
+                        .message("Get user successfully")
+                        .data(userResponse)
+                        .build()
+        );
     }
 
 }

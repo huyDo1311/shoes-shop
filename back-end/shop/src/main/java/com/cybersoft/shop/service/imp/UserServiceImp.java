@@ -7,6 +7,7 @@ import com.cybersoft.shop.repository.RoleRepository;
 import com.cybersoft.shop.repository.UserRepository;
 import com.cybersoft.shop.request.SignInRequest;
 import com.cybersoft.shop.request.SignUpRequest;
+import com.cybersoft.shop.response.user.UserResponse;
 import com.cybersoft.shop.service.UserService;
 import com.cybersoft.shop.component.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,12 @@ public class UserServiceImp implements UserService {
             return user;
         }
         return userOptional.orElseThrow();
+    }
+
+    @Override
+    public UserResponse getInfo(String email) {
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new RuntimeException("User not found"));
+        return UserResponse.toDTOUser(user);
     }
 }
