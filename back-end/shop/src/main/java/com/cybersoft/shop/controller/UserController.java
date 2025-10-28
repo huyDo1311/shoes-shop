@@ -85,10 +85,9 @@ public class UserController {
         );
     }
 
-    @PostMapping(value = "/update")
-    public ResponseEntity<?> updateUser(@ModelAttribute UserUpdateRequest request,
-                                        @RequestPart(value = "file", required = false) MultipartFile file) {
-        var userResponse = userService.updateUser(request, file);
+    @PutMapping(value = "/update")
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateRequest request) {
+        var userResponse = userService.updateUser(request, null);
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .status(HttpStatus.OK.value())
