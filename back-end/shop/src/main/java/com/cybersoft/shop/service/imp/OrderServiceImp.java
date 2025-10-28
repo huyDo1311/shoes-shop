@@ -42,24 +42,41 @@ public class OrderServiceImp implements OrderService {
         Variant variant = variantRepository.findById(sku)
                 .orElseThrow(()-> new RuntimeException("Variant not found by SKU: " + sku));
 
+        //check tồn kho
+        int stock = variant.getQuantity();
+
+        Order existingCart = orderRepository.findByUserAndStatus(user, OrderStatus.Pending).orElse(null);
+        int alreadyInCart = 0;
+
+        if(existingCart != null && existingCart.getItems() != null){
+            alreadyInCart = existingCart.getItems().stream()
+                    .filter(i -> sku.equals(i.getVariantSku()))
+                    .mapToInt(OrderVariant::getQuantity)
+                    .findFirst().orElse(0);
+        }
+
+        if(alreadyInCart + quantity > stock){
+            throw new RuntimeException("Quantity exceeds stock (" + stock + ")");
+        }
+
         float unitPrice = variant.getProduct().getPrice();
 
-        Order order = orderRepository.findByUserAndStatus(user, OrderStatus.Pending)
-                .orElseGet(()->{
-                    Order order1 = Order.builder()
-                            .user(user)
-                            .status(OrderStatus.Pending)
-                            .items(new ArrayList<>())
-                            .build();
-                    return orderRepository.save(order1);
-                });
-        if (order.getItems() == null) order.setItems(new ArrayList<>());
-        order.addOrIncreaseItem(sku, unitPrice, quantity);
-        order.recalcTotal();
+        Order cart = (existingCart != null) ? existingCart
+                :orderRepository.save(
+                        Order.builder()
+                                .user(user)
+                                .status(OrderStatus.Pending)
+                                .items(new ArrayList<>())
+                                .build()
+        );
+        if(cart.getStatus() != OrderStatus.Pending){
+            throw new RuntimeException("cart is not modifiable ( status = " +cart.getStatus() + ")");
+        }
+        if(cart.getItems() == null) cart.setItems(new ArrayList<>());
+        cart.addOrIncreaseItem(sku, unitPrice, quantity);
+        cart.recalcTotal();
 
-        Order saved = orderRepository.save(order);
-
-        return toRes(saved);
+        return toRes(orderRepository.save(cart));
     }
 
     @Override
@@ -108,6 +125,7 @@ public class OrderServiceImp implements OrderService {
 
         if(cart.getItems() == null)
             cart.setItems(new ArrayList<>());
+
         OrderVariant item = cart.getItems().stream()
                 .filter(i -> i.getVariantSku().equals(sku))
                 .findFirst()
@@ -115,8 +133,14 @@ public class OrderServiceImp implements OrderService {
         if(quantity <= 0){
             cart.getItems().remove(item);
         }else {
-            item.setQuantity(quantity);
+            Variant variant = variantRepository.findBySku(sku)
+                    .orElseThrow(() -> new RuntimeException("Variant not found by SKU: " + sku));
+            int stock = variant.getQuantity();
+            if (quantity > stock) {
+                throw new RuntimeException("Quantity exceeds stock (" + stock + ")");
         }
+            item.setQuantity(quantity);
+            }
         cart.recalcTotal();
 
         return toRes(orderRepository.save(cart));
@@ -190,6 +214,7 @@ public class OrderServiceImp implements OrderService {
             String imageUrl = "";
             int sizeValue = 0;
             String colorName = "";
+            int variantStock = 0;
 
             if(v != null && v.getProduct() != null){
                 var p = v.getProduct();
@@ -205,6 +230,7 @@ public class OrderServiceImp implements OrderService {
             if(s != null){
                 sizeValue = s.getSizeValue();
             }
+            variantStock = v.getQuantity();
             var lineTotal = i.getPrice()*i.getQuantity();
 
             return OrderItemResponse.builder()
@@ -216,6 +242,7 @@ public class OrderServiceImp implements OrderService {
                     .colorName(colorName)
                     .sizeValue(sizeValue)
                     .quantity(i.getQuantity())
+                    .variantStock(variantStock)
                     .price(i.getPrice())
                     .lineTotal(lineTotal)
                     .build();

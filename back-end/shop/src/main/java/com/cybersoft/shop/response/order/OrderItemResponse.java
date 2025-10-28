@@ -21,6 +21,7 @@ public class OrderItemResponse {
     private int sizeValue;
 
     private int quantity;
+    private int variantStock;
     private float price;
     private float lineTotal;
 }
