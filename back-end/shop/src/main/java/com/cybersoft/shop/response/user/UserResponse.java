@@ -40,8 +40,12 @@ public class UserResponse {
                     .toList();
         }
         return UserResponse.builder()
-                .userName(user.getUserName())
-                .email(user.getEmail())
+                .userName(user.getUserName() == null ? "" : user.getUserName())
+                .email(user.getEmail() == null ? "" : user.getEmail())
+                .dateOfBirth(user.getDateOfBirth() == null ? "" : user.getDateOfBirth())
+                .address(user.getAddress() == null ? "": user.getAddress())
+                .phone(user.getPhone() == null ? "": user.getPhone())
+                .avatar(user.getAvatar() == null ? "" : user.getAvatar())
                 .roles(roleNames)
                 .build();
     }
