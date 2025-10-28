@@ -2,10 +2,7 @@ package com.cybersoft.shop.controller;
 
 import com.cybersoft.shop.entity.RefreshToken;
 import com.cybersoft.shop.entity.User;
-import com.cybersoft.shop.request.GetUserInfoRequest;
-import com.cybersoft.shop.request.RefreshTokenRequest;
-import com.cybersoft.shop.request.SignInRequest;
-import com.cybersoft.shop.request.SignUpRequest;
+import com.cybersoft.shop.request.*;
 import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.response.user.RefreshTokenResponse;
 import com.cybersoft.shop.response.user.SignInResponse;
@@ -18,10 +15,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import java.util.Map;
@@ -85,6 +80,19 @@ public class UserController {
                 ResponseObject.builder()
                         .status(HttpStatus.OK.value())
                         .message("Get user successfully")
+                        .data(userResponse)
+                        .build()
+        );
+    }
+
+    @PostMapping(value = "/update")
+    public ResponseEntity<?> updateUser(@ModelAttribute UserUpdateRequest request,
+                                        @RequestPart(value = "file", required = false) MultipartFile file) {
+        var userResponse = userService.updateUser(request, file);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .status(HttpStatus.OK.value())
+                        .message("Update user successfully")
                         .data(userResponse)
                         .build()
         );
