@@ -7,13 +7,16 @@ import com.cybersoft.shop.repository.RoleRepository;
 import com.cybersoft.shop.repository.UserRepository;
 import com.cybersoft.shop.request.SignInRequest;
 import com.cybersoft.shop.request.SignUpRequest;
+import com.cybersoft.shop.request.UserUpdateRequest;
 import com.cybersoft.shop.response.user.UserResponse;
+import com.cybersoft.shop.service.FileService;
 import com.cybersoft.shop.service.UserService;
 import com.cybersoft.shop.component.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +32,8 @@ public class UserServiceImp implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private FileService fileService;
 
     @Override
     public User signUp(SignUpRequest signUpRequest) throws Exception {
@@ -82,6 +87,35 @@ public class UserServiceImp implements UserService {
     public UserResponse getInfo(String email) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new RuntimeException("User not found"));
+        return UserResponse.toDTOUser(user);
+    }
+
+    @Override
+    public UserResponse updateUser(UserUpdateRequest request, MultipartFile avatar) {
+        if(request.getEmail() == null && request.getEmail().isBlank()){
+            throw new RuntimeException("Email is required");
+        }
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(()-> new RuntimeException("User not found"));
+
+        if(request.getUserName() != null)
+            user.setUserName(request.getUserName().trim());
+        if(request.getDateOfBirth() != null)
+            user.setDateOfBirth(request.getDateOfBirth().trim());
+        if(request.getAddress() != null)
+            user.setAddress(request.getAddress().trim());
+        if(request.getPhone() != null)
+            user.setPhone(request.getPhone().trim());
+        if(avatar != null && !avatar.isEmpty()){
+            try {
+                var uploadRes = fileService.getFileUploadResponse(avatar);
+                String url = uploadRes.getPublicUrl();
+                user.setAvatar(url == null ? "" : url);
+            }catch (Exception e){
+                throw new RuntimeException("Upload avatar failed: " + e.getMessage());
+            }
+        }
+        userRepository.save(user);
         return UserResponse.toDTOUser(user);
     }
 }
