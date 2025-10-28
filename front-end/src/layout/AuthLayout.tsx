@@ -14,12 +14,21 @@ const AuthLayout = ({
   navbar: NavbarProps[];
 }) => {
   const auth = useContext(AuthContext);
+  console.log("auth", auth)
 
   const location = useLocation();
 
+  const hasAccess = allowedRole.some((allowed) => {
+  const userRole = auth?.currentUser?.role
+  if (!userRole) return false
+  // hỗ trợ cả "ROLE_USER" và "USER"
+  return userRole === allowed || userRole === allowed.replace("ROLE_", "")
+})
+
+
   return (
     <>
-      {allowedRole.find((v) => auth?.currentUser?.role.includes(v)) ? (
+      {/* {allowedRole.find((v) => auth?.currentUser?.role.includes(v)) ? (
         <SettingLayout>
           {navbar.map((link, idx) => {
             return <SidebarLink key={idx} link={link} />;
@@ -31,7 +40,18 @@ const AuthLayout = ({
         </>
       ) : (
         <Navigate to="/sign-in" state={{ from: location }} replace />
-      )}
+      )} */}
+      {hasAccess ? (
+      <SettingLayout>
+        {navbar.map((link, idx) => (
+          <SidebarLink key={idx} link={link} />
+        ))}
+      </SettingLayout>
+    ) : auth?.auth ? (
+      <Unauthorized />
+    ) : (
+      <Navigate to="/sign-in" state={{ from: location }} replace />
+    )}
     </>
   );
 };

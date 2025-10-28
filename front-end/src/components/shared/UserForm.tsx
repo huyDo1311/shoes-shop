@@ -21,7 +21,7 @@ const UserForm = ({
   onSubmit,
   isPending,
 }: UserFormProps) => {
-  
+
   const schema = !isRegister
     ? userSchema
     : userSchema
@@ -36,8 +36,8 @@ const UserForm = ({
 
   type FormType = z.infer<typeof schema>;
 
-  
-  
+
+
   const form = useForm<FormType>({
     resolver: zodResolver(schema),
     defaultValues,
@@ -55,6 +55,34 @@ const UserForm = ({
             inputType="email"
             disabled={!isRegister}
             placeholder="abc@gmail.com"
+            control={form.control}
+          />
+        </div>
+        <div className="grid gap-2">
+          <RenderFormField
+            name="userName"
+            title="Full Name"
+            type="input"
+            inputType="text"
+            placeholder="John"
+            control={form.control}
+          />
+        </div>
+        <div className="grid gap-2">
+          <RenderFormField
+            name="phone"
+            title="Phone"
+            type="input"
+            inputType="text"
+            control={form.control}
+          />
+        </div>
+        <div className="grid gap-2">
+          <RenderFormField
+            name="address"
+            title="Address"
+            type="input"
+            inputType="text"
             control={form.control}
           />
         </div>
@@ -78,6 +106,14 @@ const UserForm = ({
                 control={form.control}
               />
             </div>
+            <div className="grid gap-2">
+            <RenderFormField
+              name="dateOfBirth"
+              title="Date of Birth"
+              type="date-picker"
+              control={form.control}
+            />
+          </div>
           </>
         )}
         <div className=" flex items-center gap-2 ">

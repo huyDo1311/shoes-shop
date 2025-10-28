@@ -9,6 +9,10 @@ import AuthLayout from '@/layout/AuthLayout';
 import { adminNavbar, userNavbar } from "./data";
 import Product from '@/page/Product';
 import ProductDetails from '@/page/ProductDetails';
+import CartLayout from '@/layout/CartLayout';
+import UserCart from '@/page/UserCart';
+import Checkout from '@/page/Checkout';
+// import UserProfile from '@/page/UserProfile';
 
 
 function App() {
@@ -37,27 +41,27 @@ function App() {
           path: "/product/:id",
           element: <ProductDetails />,
         },
-        // {
-        //   element: <CartLayout />,
-        //   children: [
-        //     {
-        //       path: "cart",
-        //       element: <UserCart />,
-        //     },
-        //     {
-        //       path: "/checkout",
-        //       element: <Checkout />,
-        //     },
-        //     {
-        //       path: "/orders",
-        //       element: <UserOrders />,
-        //     },
-        //     {
-        //       path: "/order/:id",
-        //       element: <OrderDetails />,
-        //     },
-        //   ],
-        // },
+        {
+          element: <CartLayout />,
+          children: [
+            {
+              path: "cart",
+              element: <UserCart />,
+            },
+            {
+              path: "/checkout",
+              element: <Checkout />,
+            },
+            {
+              path: "/orders",
+              // element: <UserOrders />,
+            },
+            {
+              path: "/order/:id",
+              // element: <OrderDetails />,
+            },
+          ],
+        },
          {
           path: "/user",
           element: (
@@ -67,10 +71,6 @@ function App() {
             {
               index: true,
               // element: <UserProfile />,
-            },
-            {
-              path: "address",
-              // element: <UserAddresses />,
             },
             {
               path: "change-password",

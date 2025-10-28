@@ -1,5 +1,6 @@
 export const OrderStatus = {
   Pending: "Pending",
+  WaitConfirm: "WaitConfirm",
   Confirmed: "Confirmed",
   Shipped: "Shipped",
   Delivered: "Delivered",
@@ -16,7 +17,8 @@ export interface CartItem {
   price: number;
   lineTotal: number;
   colorName: string;
-  sizeValue: number
+  sizeValue: number;
+  variantStock: number
 }
 
 export interface Cart {

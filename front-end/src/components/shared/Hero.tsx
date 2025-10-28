@@ -38,7 +38,7 @@ const Hero = () => {
 
           <BoxReveal boxColor={"#5046e6"} duration={0.5}>
             <p className="text-4xl py-2 text-center bg-clip-text bg-gradient-to-b from-slate-400 to-blue-600 text-transparent lg:text-6xl font-semibold">
-              SpringCommerce
+              Shoes shop
             </p>
           </BoxReveal>
           <BoxReveal boxColor={"#5046e6"} duration={0.5}>

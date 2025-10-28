@@ -6,6 +6,7 @@ import AuthContext from "@/context/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orderAPI } from "@/apis/order.api";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export type AddToCartProps = {
   quantity: number;
@@ -14,8 +15,10 @@ export type AddToCartProps = {
 };
 
 const AddToCart = ({ quantity, sku }: AddToCartProps) => {
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   const email = currentUser?.email;
+
   const queryClient = useQueryClient();
 
   const addToCartMutation = useMutation({
@@ -34,6 +37,11 @@ const AddToCart = ({ quantity, sku }: AddToCartProps) => {
   })
 
   const onsubmit = () => {
+    if (!email) {
+      toast.warning("Please sign in to add items to your cart.");
+      navigate("/sign-in");
+      return;
+    }
     addToCartMutation.mutate({
       quantity: quantity,
       sku: sku,

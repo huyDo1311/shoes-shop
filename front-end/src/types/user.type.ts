@@ -1,23 +1,22 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const userSchema = z.object({
-  email: z.string().email(),
+ email: z.string().email(),
+  userName: z.string().optional(),
+  avatar: z.string().optional(),
+  dateOfBirth: z.string().optional(), // sửa lại
+  phone: z
+    .string()
+    .regex(/^0\d{9}$/, "Invalid phone number. Must start with 0 and have 10 digits.")
+    .optional(),
+  address: z.string().optional(),
+  isActive: z.boolean().optional(),
   password: z.string().optional(),
   confirmPassword: z.string().optional(),
-});
+  roles: z.array(z.string()).optional() 
+})
 
-export type UserFormType = z.infer<typeof userSchema> ;
-
-export const addressSchema = z.object({
-  fullName: z.string(),
-  phoneNumber: z.string(),
-  district: z.string(),
-  province: z.string(),
-  ward: z.string(),
-  specify: z.string(),
-});
-
-export type AddressType = z.infer<typeof addressSchema>;
+export type UserFormType = z.infer<typeof userSchema>
 
 type Role = 'User' | 'Admin'
 
