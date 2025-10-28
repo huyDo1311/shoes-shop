@@ -29,7 +29,7 @@ type RenderFormFieldProps<T extends FieldValues> = {
   labelClassName?: string;
   isMultipleFile?: boolean;
   disabled?: boolean;
-  inputType?: "text" | "password" | "email" | "number" | "file";
+  inputType?: "text" | "password" | "email" | "number" | "file" ;
   type: "input" | "textarea" | "text-editor" | "date-picker";
 };
 

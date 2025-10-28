@@ -21,11 +21,11 @@ import DeleteService from "@/components/shared/DeleteService";
 
 
 const ToggleCart = () => {
- 
-  const {currentUser} = useAuth();
+
+  const { currentUser } = useAuth();
   const email = currentUser?.email;
 
-    const {
+  const {
     data,
     isPending,
     isError,
@@ -38,7 +38,7 @@ const ToggleCart = () => {
   const cart: Cart | undefined = data?.data.data;
   const items = cart?.items ?? [];
 
-  return  (
+  return (
     <Sheet>
       <SheetTrigger asChild>
         <Button size="sm" variant="outline">
