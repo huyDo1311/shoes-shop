@@ -92,7 +92,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserResponse updateUser(UserUpdateRequest request, MultipartFile avatar) {
-        if(request.getEmail() == null && request.getEmail().isBlank()){
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new RuntimeException("Email is required");
         }
         User user = userRepository.findByEmail(request.getEmail())
@@ -106,15 +106,8 @@ public class UserServiceImp implements UserService {
             user.setAddress(request.getAddress().trim());
         if(request.getPhone() != null)
             user.setPhone(request.getPhone().trim());
-        if(avatar != null && !avatar.isEmpty()){
-            try {
-                var uploadRes = fileService.getFileUploadResponse(avatar);
-                String url = uploadRes.getPublicUrl();
-                user.setAvatar(url == null ? "" : url);
-            }catch (Exception e){
-                throw new RuntimeException("Upload avatar failed: " + e.getMessage());
-            }
-        }
+        if (request.getAvatar() != null)
+            user.setAvatar(request.getAvatar().trim());
         userRepository.save(user);
         return UserResponse.toDTOUser(user);
     }
