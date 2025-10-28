@@ -16,7 +16,8 @@ import java.util.Optional;
 public interface VariantRepository extends JpaRepository<Variant, String> {
     boolean existsByProductAndColorAndSize(Product product, Color color, Size size);
 
-
+    @EntityGraph(attributePaths = {"product","color","size"})
+    Optional<Variant> findBySku(String sku);
 
     @EntityGraph(attributePaths = {"product", "color", "size"})
     List<Variant> findBySkuIn(Collection<String> skus);
