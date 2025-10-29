@@ -11,7 +11,9 @@ import type { Cart, CartItem } from "@/types/order.type";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import UserForm from "@/components/shared/UserForm";
 import userApi from "@/apis/user.api";
-import type { UserFormType } from "@/types/user.type";
+import { userSchema, type UserFormType } from "@/types/user.type";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type UserInfo = {
   userName: string;
@@ -24,13 +26,22 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    userName: '',
-    phone: '',
-    address: '',
-    email: '',
-  });
+  // const [userInfo, setUserInfo] = useState<UserInfo>({
+  //   userName: '',
+  //   phone: '',
+  //   address: '',
+  //   email: '',
+  // });
 
+  const form = useForm<UserFormType>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      email: "",
+      userName: "",
+      phone: "",
+      address: "",
+    },
+  });
 
   const { currentUser } = useAuth();
   const email = currentUser?.email;
@@ -42,33 +53,68 @@ const Checkout = () => {
   });
 
 
+  // useEffect(() => {
+  //   if (fetchedUserInfo?.data?.data) {
+  //     const info = fetchedUserInfo.data.data;
+  //     if (!info.userName || !info.phone || !info.address) {
+  //       toast.warning("Please complete your delivery information!");
+
+  //     }
+  //     setUserInfo({
+  //       userName: info.userName || "",
+  //       phone: info.phone || "",
+  //       address: info.address || "",
+  //       email: info.email
+  //     });
+  //   }
+  // }, [fetchedUserInfo]);
+
   useEffect(() => {
     if (fetchedUserInfo?.data?.data) {
       const info = fetchedUserInfo.data.data;
-      if (!info.userName || !info.phone || !info.address) {
-        toast.warning("Please complete your delivery information!");
-
-      }
-      setUserInfo({
+      form.reset({
+        email: info.email || "",
         userName: info.userName || "",
         phone: info.phone || "",
         address: info.address || "",
-        email: info.email
       });
+
+      if (!info.userName || !info.phone || !info.address) {
+        toast.warning("Please complete your delivery information!");
+      }
     }
-  }, [fetchedUserInfo]);
+  }, [fetchedUserInfo, form]);
+
+  // const userUpdateInfoMutation = useMutation({
+  //   mutationFn: (body: UserFormType) => userApi.updateUserInfo(body),
+  //   onSuccess: (res) => {
+  //     toast.success("Cập nhật thông tin giao hàng thành công!");
+  //     // Cập nhật lại state sau khi backend lưu thành công
+  //     if (res.data?.data) {
+  //       setUserInfo({
+  //         userName: res.data.data.userName || "",
+  //         phone: res.data.data.phone || "",
+  //         address: res.data.data.address || "",
+  //         email: res.data.data.email,
+  //       });
+  //     }
+  //   },
+  //   onError: (error: any) => {
+  //     toast.error(error?.response?.data?.message || "Cập nhật thất bại!");
+  //   },
+  // });
 
   const userUpdateInfoMutation = useMutation({
     mutationFn: (body: UserFormType) => userApi.updateUserInfo(body),
     onSuccess: (res) => {
       toast.success("Cập nhật thông tin giao hàng thành công!");
-      // Cập nhật lại state sau khi backend lưu thành công
-      if (res.data?.data) {
-        setUserInfo({
-          userName: res.data.data.userName || "",
-          phone: res.data.data.phone || "",
-          address: res.data.data.address || "",
-          email: res.data.data.email,
+      const updated = res.data?.data;
+      if (updated) {
+        form.reset({
+          email: updated.email,
+          userName: updated.userName || "",
+          phone: updated.phone || "",
+          address: updated.address || "",
         });
       }
     },
@@ -88,7 +134,7 @@ const Checkout = () => {
     // Gửi request update thông tin
     userUpdateInfoMutation.mutate({
       ...values,
-      email, 
+      email,
     });
   };
 
@@ -101,14 +147,45 @@ const Checkout = () => {
   const cart: Cart | undefined = data?.data.data;
   const items = cart?.items ?? [];
 
+  // const handlePlaceOrder = () => {
+  //   if (!userInfo.userName || !userInfo.phone || !userInfo.address) {
+  //     toast.error("Please complete your delivery information!");
+  //     return;
+  //   }
+
+  //   toast.success("Đặt hàng thành công!");
+  // };
+
+  const checkOutMutation = useMutation({
+    mutationFn: (body: { email: string }) => orderAPI.checkOut(body),
+  })
+
   const handlePlaceOrder = () => {
-    if (!userInfo.userName || !userInfo.phone || !userInfo.address) {
+    const values = form.getValues();
+    if (!values.userName || !values.phone || !values.address) {
       toast.error("Please complete your delivery information!");
       return;
     }
+    if (!email) {
+      toast.error("Không tìm thấy email người dùng!");
+      return;
+    }
 
-    toast.success("Đặt hàng thành công!");
+    checkOutMutation.mutate(
+      { email },
+      {
+        onSuccess: () => {
+          toast.success("Đặt hàng thành công!");
+          // navigate("/order-success"); // Tùy bạn muốn chuyển trang không
+        },
+        onError: () => {
+          toast.error("Đặt hàng thất bại, vui lòng thử lại!");
+        },
+      }
+    );
   };
+
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     items && (
@@ -131,14 +208,19 @@ const Checkout = () => {
               <div className="flex flex-col space-y-2 text-sm">
                 <div className="flex items-center gap-3">
                   <p className="font-medium text-base text-black dark:text-white">
-                    {userInfo?.userName}
+                    {/* {userInfo?.userName} */}
+                    {form.watch("userName") || "—"}
                   </p>
                   <Separator orientation="vertical" className="h-4 dark:bg-gray-50" />
-                  <p className="text-muted-foreground">{userInfo?.phone}</p>
+                  <p className="text-muted-foreground">
+                    {/* {userInfo?.phone} */}
+                    {form.watch("phone") || "—"}
+                  </p>
                 </div>
 
                 <p className="text-sm text-muted-foreground">
-                  {userInfo?.address}
+                  {/* {userInfo?.address} */}
+                  {form.watch("address") || "—"}
                 </p>
               </div>
 
@@ -152,7 +234,7 @@ const Checkout = () => {
                     <DialogTitle>Chỉnh sửa thông tin giao hàng</DialogTitle>
                   </DialogHeader>
 
-                  <UserForm
+                  {/* <UserForm
                     defaultValues={userInfo}
                     isRegister={false}
                     onSubmit={(values) => {
@@ -160,6 +242,15 @@ const Checkout = () => {
                       setOpen(false);
                     }}
                     isPending={false}
+                  /> */}
+                  <UserForm
+                    form={form}
+                    isRegister={false}
+                    onSubmit={(values) => {
+                      handleUpdateUser(values);
+                      setOpen(false);
+                    }}
+                    isPending={userUpdateInfoMutation.isPending}
                   />
                 </DialogContent>
               </Dialog>
@@ -207,13 +298,25 @@ const Checkout = () => {
             <div className="flex-col space-y-3 max-w-lg w-full ">
               <div className="flex w-full items-center justify-between">
                 <p className="text-lg">Total</p>
-                <p className="text-red-500">total</p>
+                <p className="text-black-500">{total}</p>
               </div>
               <div className="flex w-full items-center justify-end">
-                <Button
+                {/* <Button
                   onClick={handlePlaceOrder}
                   size="sm"
                   disabled={!userInfo.userName || !userInfo.phone || !userInfo.address}
+                >
+                  <TruckIcon className="size-4 mr-2" />
+                  Place Order
+                </Button> */}
+                <Button
+                  onClick={handlePlaceOrder}
+                  size="sm"
+                  disabled={
+                    !form.watch("userName") ||
+                    !form.watch("phone") ||
+                    !form.watch("address")
+                  }
                 >
                   <TruckIcon className="size-4 mr-2" />
                   Place Order
