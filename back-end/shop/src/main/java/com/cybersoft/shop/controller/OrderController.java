@@ -89,7 +89,7 @@ public class OrderController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable int id,
                                           @Valid @RequestBody OrderStatusUpdateRequest req) {
-        OrderResponse data = orderService.updateStatus(id, req.getStatus());
+        OrderResponse data = orderService.updateStatus(id, String.valueOf(req.getStatus()));
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .message("Order status updated")
@@ -109,6 +109,30 @@ public class OrderController {
                         .status(HttpStatus.NO_CONTENT.value())
                         .data(null)
                         .build());
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkout(@Valid @RequestBody CheckoutRequest request){
+        OrderResponse data = orderService.checkout(request);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Checkout success")
+                        .status(HttpStatus.OK.value())
+                        .data(data)
+                        .build()
+        );
+    }
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<?> cancel (@PathVariable int id,
+                                     @Valid @RequestBody OrderCancelRequest request){
+        OrderResponse data = orderService.cancel(id,request);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Order cancelled")
+                        .status(HttpStatus.OK.value())
+                        .data(data)
+                        .build()
+        );
     }
 
 }

@@ -6,6 +6,8 @@ import com.cybersoft.shop.entity.User;
 import com.cybersoft.shop.entity.Variant;
 import com.cybersoft.shop.enums.OrderStatus;
 import com.cybersoft.shop.repository.*;
+import com.cybersoft.shop.request.CheckoutRequest;
+import com.cybersoft.shop.request.OrderCancelRequest;
 import com.cybersoft.shop.response.order.OrderItemResponse;
 import com.cybersoft.shop.response.order.OrderResponse;
 import com.cybersoft.shop.service.OrderService;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -98,13 +101,37 @@ public class OrderServiceImp implements OrderService {
         return toRes(order);
     }
 
+    @Transactional
     @Override
-    public OrderResponse updateStatus(int id, OrderStatus status) {
+    public OrderResponse updateStatus(int id, String newStatus) {
+        OrderStatus newOS = OrderStatus.valueOf(newStatus);
         Order order = orderRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Order not found: " + id));
-        OrderStatus newStatus = OrderStatus.valueOf(String.valueOf(status));
-        order.setStatus(newStatus);
-        order.recalcTotal();
+
+        OrderStatus oldOS = order.getStatus();
+
+        if(oldOS.ordinal() > newOS.ordinal()){
+            throw new RuntimeException("Cannot move status backward");
+        }
+        if(oldOS == OrderStatus.Pending && newOS == OrderStatus.WaitConfirm && !order.isStockDeducted()){
+            adjustInventory(order, -1);
+            order.setStockDeducted(true);
+        }
+
+        if(oldOS == OrderStatus.WaitConfirm && newOS == OrderStatus.Cancelled && order.isStockDeducted()){
+            adjustInventory(order, +1);
+            order.setStockDeducted(false);
+        }
+
+        if(oldOS == OrderStatus.Shipped && newOS == OrderStatus.DeliveryFailed && order.isStockDeducted()){
+            adjustInventory(order, +1);
+            order.setStockDeducted(false);
+        }
+        if(oldOS == OrderStatus.Delivered && newOS == OrderStatus.Cancelled){
+           throw new RuntimeException("Cannot cancel delivered order");
+        }
+
+        order.setStatus(newOS);
         return toRes(orderRepository.save(order));
     }
 
@@ -185,6 +212,46 @@ public class OrderServiceImp implements OrderService {
         return toRes(orderRepository.save(cart));
     }
 
+    @Transactional
+    @Override
+    public OrderResponse checkout(CheckoutRequest request) {
+        String email = request.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new RuntimeException("User not found: " + email));
+
+        Order cart = orderRepository.findByUserAndStatus(user,OrderStatus.Pending)
+                .orElseThrow(()-> new RuntimeException("No pending cart for user"));
+
+        if(cart.getItems() == null || cart.getItems().isEmpty()){
+            throw new RuntimeException("Cart is empty");
+        }
+
+        OrderResponse updated = updateStatusInternal(cart, OrderStatus.WaitConfirm);
+
+        return updated;
+    }
+
+    @Transactional
+    @Override
+    public OrderResponse cancel(int id, OrderCancelRequest request) {
+        String email = request.getEmail();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new RuntimeException("User not found " + email));
+
+        Order order = orderRepository.findByUserAndStatus(user, OrderStatus.WaitConfirm)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        if(order.getUser() == null || !order.getUser().getId().equals(user.getId())){
+            throw new RuntimeException("Permission denied to cancel this order");
+        }
+        if(order.getStatus() == OrderStatus.Delivered){
+            throw new RuntimeException("Cannot cancel an order that has been delivered");
+        }
+        if(order.getStatus() == OrderStatus.Cancelled){
+            return toRes(order);
+        }
+        return updateStatus(id, String.valueOf(OrderStatus.Cancelled));
+    }
+
     private OrderResponse toRes(Order o){
         var items = o.getItems() == null ? List.<OrderItemResponse>of() : mapItemsWithImages(o.getItems());
 
@@ -248,6 +315,37 @@ public class OrderServiceImp implements OrderService {
                     .build();
 
         }).toList();
+    }
+
+    private void adjustInventory(Order order, int direction) {
+        List<String> skus = order.getItems().stream().map(OrderVariant::getVariantSku).toList();
+        List<Variant> variants = variantRepository.findBySkuInForUpdate(skus);
+        var bySku = variants.stream()
+                .collect(Collectors.toMap(Variant::getSku, v -> v, (a, b) -> a));
+
+        for (OrderVariant item : order.getItems()) {
+            Variant v = bySku.get(item.getVariantSku());
+            if (v == null) continue;
+
+            int newQty = v.getQuantity() + (direction * item.getQuantity());
+            if (direction < 0 && newQty < 0)
+                throw new RuntimeException("Out of stock for " + v.getSku());
+
+            v.setQuantity(newQty);
+        }
+        variantRepository.saveAll(variants);
+    }
+
+    private OrderResponse updateStatusInternal(Order order, OrderStatus newStatus){
+        OrderStatus oldStatus = order.getStatus();
+
+        if(oldStatus == OrderStatus.Pending && newStatus == OrderStatus.WaitConfirm
+        && !order.isStockDeducted()){
+            adjustInventory(order, -1);
+            order.setStockDeducted(true);
+        }
+        order.setStatus(newStatus);
+        return toRes(orderRepository.save(order));
     }
 
 }
