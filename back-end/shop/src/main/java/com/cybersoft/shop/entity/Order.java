@@ -29,6 +29,9 @@ public class Order extends BaseEntity{
     @Column(nullable = false)
     private float total = 0f;
 
+    @Column(nullable = false)
+    private boolean stockDeducted = false;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private OrderStatus status = OrderStatus.Pending;
