@@ -122,6 +122,23 @@ public class OrderController {
                         .build()
         );
     }
+
+    @PostMapping("/update/status")
+    public ResponseEntity<?> updateStatusVNP(@RequestBody VNPStatusUpdateRequest request){
+
+        OrderResponse data = orderService.VNPStatusUpdate(request);
+
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("update success")
+                        .status(HttpStatus.OK.value())
+                        .data(data)
+                        .build()
+        );
+    }
+
+
+
     @PostMapping("/{id}/cancel")
     public ResponseEntity<?> cancel (@PathVariable int id,
                                      @Valid @RequestBody OrderCancelRequest request){

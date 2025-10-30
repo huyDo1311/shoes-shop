@@ -4,7 +4,7 @@ import type { Cart } from '@/types/order.type'
 import type { SuccessResponse } from '@/types/utils.type'
 import http from '@/utils/http'
 
-const URL_ORDER = 'orders'
+export const URL_ORDER = 'orders'
 const URL_CART = 'cart'
 
 export const orderAPI = {

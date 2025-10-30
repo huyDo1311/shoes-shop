@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Order extends BaseEntity{
 
     @Id
@@ -39,6 +38,10 @@ public class Order extends BaseEntity{
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<OrderVariant> items = new ArrayList<>();
+
+    @Builder.Default
+    @Column(name = "vnp_txn_ref")
+    private String vnpTxnRef = "";
 
     public void recalcTotal() {
         if (items == null) { this.total = 0f; return; }

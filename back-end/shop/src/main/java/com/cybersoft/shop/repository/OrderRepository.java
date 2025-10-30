@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
     Optional<Order> findByUserAndStatus(User user, OrderStatus status);
 
+    Optional<Order> findByVnpTxnRef(String vnp_TxnRef);
 }

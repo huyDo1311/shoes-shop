@@ -8,6 +8,7 @@ import com.cybersoft.shop.enums.OrderStatus;
 import com.cybersoft.shop.repository.*;
 import com.cybersoft.shop.request.CheckoutRequest;
 import com.cybersoft.shop.request.OrderCancelRequest;
+import com.cybersoft.shop.request.VNPStatusUpdateRequest;
 import com.cybersoft.shop.response.order.OrderItemResponse;
 import com.cybersoft.shop.response.order.OrderResponse;
 import com.cybersoft.shop.service.OrderService;
@@ -250,6 +251,22 @@ public class OrderServiceImp implements OrderService {
             return toRes(order);
         }
         return updateStatus(id, String.valueOf(OrderStatus.Cancelled));
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse VNPStatusUpdate(VNPStatusUpdateRequest request) {
+        String vnp_TxnRef = request.getVnp_TxnRef();
+        Order order = orderRepository.findByVnpTxnRef(vnp_TxnRef)
+                .orElseThrow(()-> new RuntimeException("Not Find vnp_TxnRef"));
+
+        if(order.getItems() == null || order.getItems().isEmpty()){
+            throw new RuntimeException("Order is empty");
+        }
+
+        OrderResponse updated = updateStatusInternal(order, OrderStatus.WaitConfirm);
+
+        return updated;
     }
 
     private OrderResponse toRes(Order o){

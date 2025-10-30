@@ -14,6 +14,8 @@ import userApi from "@/apis/user.api";
 import { userSchema, type UserFormType } from "@/types/user.type";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { paymentAPI } from "@/apis/payment.api";
 
 type UserInfo = {
   userName: string;
@@ -25,6 +27,7 @@ type UserInfo = {
 const Checkout = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
 
   // const [userInfo, setUserInfo] = useState<UserInfo>({
   //   userName: '',
@@ -160,6 +163,10 @@ const Checkout = () => {
     mutationFn: (body: { email: string }) => orderAPI.checkOut(body),
   })
 
+  const createPaymentMutation = useMutation({
+    mutationFn: (body: { amount: number ; language: string, email: string }) => paymentAPI.createPaymentUrl(body),
+  });
+
   const handlePlaceOrder = () => {
     const values = form.getValues();
     if (!values.userName || !values.phone || !values.address) {
@@ -171,18 +178,55 @@ const Checkout = () => {
       return;
     }
 
-    checkOutMutation.mutate(
-      { email },
-      {
-        onSuccess: () => {
-          toast.success("Đặt hàng thành công!");
-          // navigate("/order-success"); // Tùy bạn muốn chuyển trang không
-        },
-        onError: () => {
-          toast.error("Đặt hàng thất bại, vui lòng thử lại!");
-        },
-      }
-    );
+    // checkOutMutation.mutate(
+    //   { email },
+    //   {
+    //     onSuccess: () => {
+    //       toast.success("Đặt hàng thành công!");
+    //       // navigate("/order-success"); // Tùy bạn muốn chuyển trang không
+    //     },
+    //     onError: () => {
+    //       toast.error("Đặt hàng thất bại, vui lòng thử lại!");
+    //     },
+    //   }
+    // );
+    if (paymentMethod === "vnpay") {
+      // Thanh toán qua VNPAY
+      createPaymentMutation.mutate(
+        { amount: total,language: 'vn', email: email},
+        {
+          onSuccess: (res) => {
+            const paymentUrl = res.data?.data;
+            if (paymentUrl) {
+              window.location.href = paymentUrl; // Redirect sang trang thanh toán
+            } else {
+              toast.error("Không nhận được liên kết thanh toán!");
+            }
+          },
+          onError: () => {
+            toast.error("Tạo liên kết thanh toán thất bại!");
+          },
+        }
+      );
+      return;
+    }
+
+    if (paymentMethod === "cash") {
+      // Thanh toán khi nhận hàng
+      checkOutMutation.mutate(
+        { email },
+        {
+          onSuccess: () => {
+            toast.success("Đặt hàng thành công!");
+            // navigate("/order-success");
+          },
+          onError: () => {
+            toast.error("Đặt hàng thất bại, vui lòng thử lại!");
+          },
+        }
+      );
+      return;
+    }
   };
 
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -297,6 +341,23 @@ const Checkout = () => {
           <div className="flex bottom-5 border shadow-sm px-3 py-2 border-slate-100 z-10 bg-white/5 justify-end items-center">
             <div className="flex-col space-y-3 max-w-lg w-full ">
               <div className="flex w-full items-center justify-between">
+                <p className="text-base">Payment Method</p>
+                <Select
+                  value={paymentMethod}
+                  onValueChange={(v) => setPaymentMethod(v)}
+                >
+                  <SelectTrigger className="w-[180px] text-sm">
+                    <SelectValue placeholder="Select Method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cash">Cash on Delivery</SelectItem>
+                    <SelectItem value="transfer">Chuyển khoản</SelectItem>
+                    <SelectItem value="vnpay">VNPAY</SelectItem>
+                    <SelectItem value="momo">Momo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex w-full items-center justify-between">
                 <p className="text-lg">Total</p>
                 <p className="text-black-500">{total}</p>
               </div>
@@ -319,6 +380,9 @@ const Checkout = () => {
                   }
                 >
                   <TruckIcon className="size-4 mr-2" />
+                  {createPaymentMutation.isPending || checkOutMutation.isPending
+                    ? "Processing..."
+                    : "Place Order"}
                   Place Order
                 </Button>
               </div>
