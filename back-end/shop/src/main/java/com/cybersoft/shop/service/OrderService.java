@@ -3,6 +3,7 @@ package com.cybersoft.shop.service;
 import com.cybersoft.shop.enums.OrderStatus;
 import com.cybersoft.shop.request.CheckoutRequest;
 import com.cybersoft.shop.request.OrderCancelRequest;
+import com.cybersoft.shop.request.VNPStatusUpdateRequest;
 import com.cybersoft.shop.response.order.OrderResponse;
 
 public interface OrderService {
@@ -17,4 +18,5 @@ public interface OrderService {
     OrderResponse clearCart(String email);
     OrderResponse checkout(CheckoutRequest request);
     OrderResponse cancel(int id, OrderCancelRequest request);
+    OrderResponse VNPStatusUpdate(VNPStatusUpdateRequest request);
 }

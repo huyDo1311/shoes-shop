@@ -25,3 +25,10 @@ jwt:
     access: 3600      #      1 * 60 * 60 = 1 ngay = 3600 giay
     refresh: 2592000  #30 * 24 * 60 * 60 = 30 ngay = 2592000 giay
   secret-key: ctBoMlFyWkcFbOjvsTgFuCMqHn0Jx43bUzXUxXebVRE=
+
+vnpay:
+  pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+  return-url: "http://localhost:3000/payment/payment-callback"
+  tmn-code: "PVJEHFHN"
+  secret-key: "K96600JY6WV85L5ZJF5TN8OFW2ZB8G2H"
+  api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"

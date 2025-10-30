@@ -1,5 +1,5 @@
-import {useState, useContext} from 'react';
-import {createBrowserRouter, RouterProvider, Navigate, Outlet} from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { createBrowserRouter, RouterProvider, Navigate, Outlet } from 'react-router-dom';
 import LayoutDefault from '@/layout/LayoutDefault'
 import Home from '@/page/Home'
 import SinnIn from '@/page/SignIn'
@@ -9,9 +9,10 @@ import AuthLayout from '@/layout/AuthLayout';
 import { adminNavbar, userNavbar } from "./data";
 import Product from '@/page/Product';
 import ProductDetails from '@/page/ProductDetails';
-import CartLayout from '@/layout/CartLayout';
+// import CartLayout from '@/layout/CartLayout';
 import UserCart from '@/page/UserCart';
 import Checkout from '@/page/Checkout';
+import PaymentCallback from '@/page/PaymentCallback';
 // import UserProfile from '@/page/UserProfile';
 
 
@@ -19,15 +20,15 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <LayoutDefault/>,
+      element: <LayoutDefault />,
       children: [
         {
           index: true,
-          element: <Home/>
+          element: <Home />
         },
         {
           path: "/sign-in",
-          element: <SignIn/>,
+          element: <SignIn />,
         },
         {
           path: "/sign-up",
@@ -42,27 +43,44 @@ function App() {
           element: <ProductDetails />,
         },
         {
-          element: <CartLayout />,
-          children: [
-            {
-              path: "cart",
-              element: <UserCart />,
-            },
-            {
-              path: "/checkout",
-              element: <Checkout />,
-            },
-            {
-              path: "/orders",
-              // element: <UserOrders />,
-            },
-            {
-              path: "/order/:id",
-              // element: <OrderDetails />,
-            },
-          ],
+          path: "/cart",
+          element: <UserCart />,
         },
-         {
+        {
+          path: "/checkout",
+          element: <Checkout />,
+        },
+        {
+          path: "/payment/payment-callback",
+          element: <PaymentCallback />,
+        },
+
+        // {
+        //   element: <CartLayout />,
+        //   children: [
+        //     {
+        //       path: "cart",
+        //       element: <UserCart />,
+        //     },
+        //     {
+        //       path: "/checkout",
+        //       element: <Checkout />,
+        //     },
+        //     {
+        //       path: "/payment/payment-callback",
+        //       element: <PaymentCallback />,
+        //     },
+        //     {
+        //       path: "/orders",
+        //       // element: <UserOrders />,
+        //     },
+        //     {
+        //       path: "/order/:id",
+        //       // element: <OrderDetails />,
+        //     },
+        //   ],
+        // },
+        {
           path: "/user",
           element: (
             <AuthLayout allowedRole={["ROLE_USER"]} navbar={userNavbar} />

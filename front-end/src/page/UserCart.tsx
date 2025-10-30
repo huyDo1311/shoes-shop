@@ -2,7 +2,7 @@ import DeleteService from "@/components/shared/DeleteService";
 import ToggleQuantity from "@/components/shared/ToggleQuantity";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckoutContext } from "@/context/CheckoutContext";
+// import { CheckoutContext } from "@/context/CheckoutContext";
 import { Trash2Icon } from "lucide-react";
 import { useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -28,12 +28,12 @@ const UserCart = () => {
   const items = cart?.items ?? [];
 
   // 🔹 Lấy context checkout
-  const checkoutContext = useContext(CheckoutContext);
-  if (!checkoutContext) {
-    throw new Error("CheckoutContext must be used within CheckoutProvider");
-  }
+  // const checkoutContext = useContext(CheckoutContext);
+  // if (!checkoutContext) {
+  //   throw new Error("CheckoutContext must be used within CheckoutProvider");
+  // }
 
-  const { updateProducts, setTotalCost } = checkoutContext;
+  // const { updateProducts, setTotalCost } = checkoutContext;
 
   // 🔹 Tính tổng toàn bộ giỏ hàng
   const total = useMemo(() => {
@@ -61,8 +61,8 @@ const UserCart = () => {
       return;
     }
 
-    updateProducts(items); // ✅ checkout toàn bộ sản phẩm trong giỏ
-    setTotalCost(total);
+    // updateProducts(items); // ✅ checkout toàn bộ sản phẩm trong giỏ
+    // setTotalCost(total);
     navigate("/checkout");
   };
 
