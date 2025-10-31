@@ -32,3 +32,11 @@ vnpay:
   tmn-code: "PVJEHFHN"
   secret-key: "K96600JY6WV85L5ZJF5TN8OFW2ZB8G2H"
   api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
+
+momo:
+  end-point: "https://test-payment.momo.vn/v2/gateway/api"
+  return-url: "http://localhost:3000/payment/payment-callback"
+  ipn-url: "http://localhost:8080/payment/momo/ipn-handler"
+  partner-code: "MOMOLRJZ20181206"
+  access-key: "mTCKt9W3eU1m39TW"
+  secret-key: "SetA5RDnLHvt51AULf51DyauxUo3kDU6"

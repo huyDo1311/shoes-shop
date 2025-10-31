@@ -1,7 +1,12 @@
 package com.cybersoft.shop.controller;
+
 import com.cybersoft.shop.request.PaymentRequest;
+import com.cybersoft.shop.request.VNPStatusUpdateRequest;
 import com.cybersoft.shop.response.ResponseObject;
+import com.cybersoft.shop.response.order.OrderResponse;
 import com.cybersoft.shop.service.IVNPayService;
+import com.cybersoft.shop.service.MomoPayService;
+import com.cybersoft.shop.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,15 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/payments")
-public class PaymentController {
-
+public class MomoPaymentController {
     @Autowired
-    private IVNPayService vnPayService;
+    private MomoPayService momoPayService;
+    @Autowired
+    private OrderService orderService;
 
-    @PostMapping("/create_payment_url")
-    public ResponseEntity<ResponseObject> createPayment(@RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
+    @PostMapping("/momo")
+    public ResponseEntity<ResponseObject> createMomoPayment(@RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
         try {
-            String paymentUrl = vnPayService.createPaymentUrl(paymentRequest, request);
+            String paymentUrl = momoPayService.createMomoPaymentUrl(paymentRequest, request);
 
             return ResponseEntity.ok(ResponseObject.builder()
                     .status(HttpStatus.OK.value())
@@ -37,10 +43,17 @@ public class PaymentController {
         }
     }
 
-    @PostMapping("/vnpay-ipn")
-    public ResponseEntity<String> handleVnpayIPN(HttpServletRequest request) {
-        String result = vnPayService.handleVnpayIPN(request);
-        return ResponseEntity.ok(result);
-    }
+    @PostMapping("/momo/status")
+    public ResponseEntity<?> updateStatusVNP(@RequestBody VNPStatusUpdateRequest request){
 
+        OrderResponse data = orderService.VNPStatusUpdate(request);
+
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("update success")
+                        .status(HttpStatus.OK.value())
+                        .data(data)
+                        .build()
+        );
+    }
 }

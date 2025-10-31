@@ -6,5 +6,8 @@ import { URL_ORDER } from "@/apis/order.api";
 export const paymentAPI = {
   createPaymentUrl: (body: { amount: number; bankCode?: string; language: string; email: string}) =>
     http.post<{ data: string }>("/payments/create_payment_url", body),
-  updateStatus: (body: { vnp_TxnRef: string }) => http.post<SuccessResponse<Cart>>(`${URL_ORDER}/update/status`, body)
+  updateStatus: (body: { vnp_TxnRef: string }) => http.post<SuccessResponse<Cart>>(`${URL_ORDER}/update/status`, body),
+  createMomoPayment: (body: { amount: number; email: string}) =>
+    http.post<{ data: string }>("/payments/momo", body),
+  updateStatusMomo: (body: { momoTxnRef: string }) => http.post<SuccessResponse<Cart>>(`payments/momo/status`, body),
 };

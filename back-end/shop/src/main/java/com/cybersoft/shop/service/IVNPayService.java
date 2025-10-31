@@ -3,6 +3,9 @@ package com.cybersoft.shop.service;
 import com.cybersoft.shop.request.PaymentRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Map;
+
 public interface IVNPayService {
     String createPaymentUrl(PaymentRequest paymentRequest, HttpServletRequest request);
+    String handleVnpayIPN(HttpServletRequest request);
 }

@@ -43,6 +43,10 @@ public class Order extends BaseEntity{
     @Column(name = "vnp_txn_ref")
     private String vnpTxnRef = "";
 
+    @Builder.Default
+    @Column(name = "momo_txn_ref")
+    private String momoTxnRef = "";
+
     public void recalcTotal() {
         if (items == null) { this.total = 0f; return; }
         float sum = 0f;
