@@ -166,6 +166,9 @@ const Checkout = () => {
   const createPaymentMutation = useMutation({
     mutationFn: (body: { amount: number ; language: string, email: string }) => paymentAPI.createPaymentUrl(body),
   });
+  const createMomoPaymentMutation = useMutation({
+    mutationFn: (body: { amount: number; email: string }) => paymentAPI.createMomoPayment(body),
+  });
 
   const handlePlaceOrder = () => {
     const values = form.getValues();
@@ -194,6 +197,26 @@ const Checkout = () => {
       // Thanh toán qua VNPAY
       createPaymentMutation.mutate(
         { amount: total,language: 'vn', email: email},
+        {
+          onSuccess: (res) => {
+            const paymentUrl = res.data?.data;
+            if (paymentUrl) {
+              window.location.href = paymentUrl; // Redirect sang trang thanh toán
+            } else {
+              toast.error("Không nhận được liên kết thanh toán!");
+            }
+          },
+          onError: () => {
+            toast.error("Tạo liên kết thanh toán thất bại!");
+          },
+        }
+      );
+      return;
+    }
+
+    if (paymentMethod === "momo"){
+      createMomoPaymentMutation.mutate(
+        { amount: total, email: email},
         {
           onSuccess: (res) => {
             const paymentUrl = res.data?.data;

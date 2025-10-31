@@ -13,10 +13,10 @@ import java.util.*;
 public class VNPayUtils {
 
     private final VNPayConfig vnPayConfig;
-
     public VNPayUtils(VNPayConfig vnPayConfig) {
         this.vnPayConfig = vnPayConfig;
     }
+
     public String getCurrentDateTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -76,6 +76,21 @@ public class VNPayUtils {
     public String getIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         return (ipAddress != null && !ipAddress.isEmpty()) ? ipAddress : request.getRemoteAddr();
+    }
+
+    public boolean validateSignature(Map<String, String> fields) {
+        // Lấy chữ ký gốc từ VNPAY
+        String vnp_SecureHash = fields.get("vnp_SecureHash");
+
+        // Xóa chữ ký khỏi map để không ảnh hưởng đến việc hash lại
+        fields.remove("vnp_SecureHashType");
+        fields.remove("vnp_SecureHash");
+
+        // Hash lại tất cả các trường
+        String signValue = hashAllFields(fields);
+
+        // So sánh với chữ ký gốc (so sánh không phân biệt hoa thường)
+        return signValue != null && signValue.equalsIgnoreCase(vnp_SecureHash);
     }
 
 }

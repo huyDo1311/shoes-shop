@@ -7,6 +7,7 @@ import com.cybersoft.shop.entity.Variant;
 import com.cybersoft.shop.enums.OrderStatus;
 import com.cybersoft.shop.repository.*;
 import com.cybersoft.shop.request.CheckoutRequest;
+import com.cybersoft.shop.request.MomoStatusUpdateRequest;
 import com.cybersoft.shop.request.OrderCancelRequest;
 import com.cybersoft.shop.request.VNPStatusUpdateRequest;
 import com.cybersoft.shop.response.order.OrderItemResponse;
@@ -259,6 +260,22 @@ public class OrderServiceImp implements OrderService {
         String vnp_TxnRef = request.getVnp_TxnRef();
         Order order = orderRepository.findByVnpTxnRef(vnp_TxnRef)
                 .orElseThrow(()-> new RuntimeException("Not Find vnp_TxnRef"));
+
+        if(order.getItems() == null || order.getItems().isEmpty()){
+            throw new RuntimeException("Order is empty");
+        }
+
+        OrderResponse updated = updateStatusInternal(order, OrderStatus.WaitConfirm);
+
+        return updated;
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse MomoStatusUpdate(MomoStatusUpdateRequest request) {
+        String vnp_TxnRef = request.getMomoTxnRef();
+        Order order = orderRepository.findByVnpTxnRef(vnp_TxnRef)
+                .orElseThrow(()-> new RuntimeException("Not Find MomoTxnRef"));
 
         if(order.getItems() == null || order.getItems().isEmpty()){
             throw new RuntimeException("Order is empty");

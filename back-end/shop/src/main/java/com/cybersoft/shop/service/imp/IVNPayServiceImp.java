@@ -113,4 +113,40 @@ public class IVNPayServiceImp implements IVNPayService {
 
         return vnPayConfig.getVnpPayUrl() + "?" + queryData;
     }
+
+    @Override
+    public String handleVnpayIPN(HttpServletRequest request) {
+        try {
+            // 🔹 Lấy toàn bộ tham số từ request
+            Map<String, String> fields = new HashMap<>();
+            for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
+                String fieldName = params.nextElement();
+                String fieldValue = request.getParameter(fieldName);
+                fields.put(fieldName, fieldValue);
+            }
+
+            // 🔹 Kiểm tra chữ ký
+            boolean validSignature = vnPayUtils.validateSignature(fields);
+            if (!validSignature) {
+                return "Invalid signature";
+            }
+
+            // 🔹 Xử lý kết quả giao dịch
+            String responseCode = fields.get("vnp_ResponseCode");
+            String txnRef = fields.get("vnp_TxnRef");
+
+            if ("00".equals(responseCode)) {
+//                vnPayService.updateOrderStatus(txnRef, "PAID");
+                return "OK";
+            } else {
+//                vnPayService.updateOrderStatus(txnRef, "FAILED");
+                return "FAILED";
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }
+
 }
