@@ -4,12 +4,19 @@ import com.cybersoft.shop.entity.User;
 import com.cybersoft.shop.request.SignInRequest;
 import com.cybersoft.shop.request.SignUpRequest;
 import com.cybersoft.shop.request.UserUpdateRequest;
+import com.cybersoft.shop.request.VerifyEmailRequest;
 import com.cybersoft.shop.response.user.UserResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
     User signUp(SignUpRequest userDTO) throws Exception;
+
+    void verifyEmail(VerifyEmailRequest request);
+
     String signIn(SignInRequest signInRequest) throws Exception;
+
+    void signOut(String authHeader);
+
     User findUserByEmail(SignInRequest signInRequest) throws Exception;
 
     UserResponse getInfo(String email);

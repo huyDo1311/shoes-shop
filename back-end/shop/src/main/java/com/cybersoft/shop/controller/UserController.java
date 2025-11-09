@@ -40,6 +40,15 @@ public class UserController {
                 .build());
     };
 
+    @PostMapping("/verify-email")
+    public ResponseEntity<ResponseObject> verifyEmail(@RequestBody VerifyEmailRequest verifyEmailRequest) {
+        userService.verifyEmail(verifyEmailRequest);
+        return ResponseEntity.ok(ResponseObject.builder()
+                .status(HttpStatus.OK.value())
+                .message("Email verification successful")
+                .build());
+    }
+
     @PostMapping("/sign-in")
     public ResponseEntity<ResponseObject> signUp(@RequestBody SignInRequest signInRequest) throws Exception {
 //            SecretKey key = Jwts.SIG.HS256.key().build();
@@ -62,6 +71,12 @@ public class UserController {
                         .status(HttpStatus.OK.value())
                         .build()
         );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader) {
+        userService.signOut(authHeader);
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     @PostMapping("/refresh-token")
