@@ -13,6 +13,30 @@ spring:
     multipart:
       max-file-size: 4MB
       max-request-size: 4MB
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: mail-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    topics:
+      user-signup-success: user.signup.success
+
+  mail:
+    
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+lockout:
+  attempts-cycle: 3
+  temporary-lock: 1
+  permanent-cycles: 2
+
+redis:
+  host: localhost
+  port: 6379
+  password: admin123
 
 cloudinary:
   cloud-name: dxsq3ivxs

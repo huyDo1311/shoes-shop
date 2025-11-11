@@ -44,6 +44,9 @@ public class User {
     @Builder.Default
     private String avatar = "";
 
+    @Builder.Default
+    private Boolean isActive = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserRole> userRoles;
 
