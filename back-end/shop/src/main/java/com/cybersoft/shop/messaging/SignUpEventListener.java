@@ -62,7 +62,7 @@ public class SignUpEventListener {
                 <p>Cảm ơn bạn đã đăng ký tài khoản tại <b>Shoes Shop</b>.</p>
                 <p>Để hoàn tất đăng ký, hãy nhập mã xác thực bên dưới vào màn hình xác thực trên website:</p>
                 <div class="code-box">%s</div>
-                <p>Mã này có hiệu lực trong <b>10 phút</b>. Nếu bạn không thực hiện đăng ký, vui lòng bỏ qua email này.</p>
+                <p>Mã này có hiệu lực trong <b>5 phút</b>. Nếu bạn không thực hiện đăng ký, vui lòng bỏ qua email này.</p>
               </div>
               <div class="footer">
                 &copy; %d Shoes Shop. Vui lòng không trả lời email này.

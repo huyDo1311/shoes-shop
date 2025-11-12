@@ -14,7 +14,7 @@ spring:
       max-file-size: 4MB
       max-request-size: 4MB
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9094
     consumer:
       group-id: mail-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -23,7 +23,10 @@ spring:
       user-signup-success: user.signup.success
 
   mail:
-    
+    host: smtp.gmail.com
+    port: 587
+    username: nguyenhuy24112003@gmail.com
+    password: thinvpctpompstgv
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
@@ -36,7 +39,7 @@ lockout:
 redis:
   host: localhost
   port: 6379
-  password: admin123
+  password: Aa@123456
 
 cloudinary:
   cloud-name: dxsq3ivxs
