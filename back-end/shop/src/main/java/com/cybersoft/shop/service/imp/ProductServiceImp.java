@@ -73,7 +73,7 @@ public class ProductServiceImp implements ProductService {
 
     @Transactional
     @Override
-    public Product updateProduct(int id, ProductUpdateRequest req) {
+    public ProductResponse updateProduct(int id, ProductUpdateRequest req) {
         Product existing = productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
@@ -123,7 +123,8 @@ public class ProductServiceImp implements ProductService {
             existing.setProductImages(images);
         }
 
-        return productRepository.save(existing);
+        Product saved = productRepository.save(existing);
+        return ProductResponse.toDTO(saved);
     }
 
     @Override

@@ -1,17 +1,14 @@
 package com.cybersoft.shop.controller;
 
-import com.cybersoft.shop.entity.Variant;
 import com.cybersoft.shop.request.VariantRequest;
 import com.cybersoft.shop.response.ResponseObject;
+import com.cybersoft.shop.response.variant.VariantResponse;
 import com.cybersoft.shop.service.VariantService;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/variants")
@@ -21,12 +18,46 @@ public class VariantController {
 
     @PostMapping
     public ResponseEntity<?> createVariant(@RequestBody VariantRequest variantRequest){
-        Variant newVariant = variantService.createVariant(variantRequest);
+        VariantResponse newVariant = variantService.createVariant(variantRequest);
         return ResponseEntity.ok(
                 ResponseObject.builder()
-                        .message("Create new product successfully")
+                        .message("Create new variant successfully")
                         .status(HttpStatus.CREATED.value())
                         .data(newVariant)
+                        .build());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getVariant(@PathVariable("id") String id){
+        VariantResponse getVariant = variantService.getVariantById(id);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Get variant successfully")
+                        .status(HttpStatus.OK.value())
+                        .data(getVariant)
+                        .build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateVariant(@PathVariable("id") String id,
+                                           @RequestBody VariantRequest variantRequest){
+        VariantResponse updateVariant = variantService.updateVariant(id,variantRequest);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Update variant successfully")
+                        .status(HttpStatus.OK.value())
+                        .data(updateVariant)
+                        .build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteVariant(@PathVariable("id") String id){
+        variantService.deleteVariant(id);
+        return ResponseEntity.ok(
+                ResponseObject.builder()
+                        .message("Delete variant successfully")
+                        .status(HttpStatus.OK.value())
+                        .data(null)
                         .build());
     }
 

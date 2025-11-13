@@ -6,6 +6,7 @@ import com.cybersoft.shop.response.BaseResponse;
 import com.cybersoft.shop.response.BrandResponse;
 import com.cybersoft.shop.response.CategoryResponse;
 import com.cybersoft.shop.response.variant.VariantResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductResponse extends BaseResponse {
     private int id;
     private String productName;

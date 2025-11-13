@@ -29,4 +29,6 @@ public interface VariantRepository extends JpaRepository<Variant, String> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select v from Variant v where v.sku in :skus")
     List<Variant> findBySkuInForUpdate(@Param("skus") Collection<String> skus);
+
+
 }
