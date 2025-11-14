@@ -17,7 +17,6 @@ import java.util.List;
 @Builder
 public class ProductUpdateRequest {
     @Size(min = 2, max = 200, message = "Product name must be between 2 and 200 characters")
-    @JsonProperty("product_name")
     private String productName;
 
     @PositiveOrZero(message = "Price must be zero or positive")

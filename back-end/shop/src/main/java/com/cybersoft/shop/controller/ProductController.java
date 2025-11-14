@@ -109,7 +109,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable("id") int id,
                                            @Valid @RequestBody ProductUpdateRequest req) {
-        Product updated = productService.updateProduct(id, req);
+        ProductResponse updated = productService.updateProduct(id, req);
         return ResponseEntity.ok(
                 ResponseObject.builder()
                         .message("Update product successfully")

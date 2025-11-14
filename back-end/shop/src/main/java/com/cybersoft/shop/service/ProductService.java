@@ -5,6 +5,7 @@ import com.cybersoft.shop.enums.SortType;
 import com.cybersoft.shop.request.ProductCreateRequest;
 import com.cybersoft.shop.request.ProductUpdateRequest;
 import com.cybersoft.shop.response.FilterCriteria;
+import com.cybersoft.shop.response.product.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 public interface ProductService {
 
     Product createProduct (ProductCreateRequest productCreateRequest);
-    Product updateProduct(int id, ProductUpdateRequest req);
+    ProductResponse updateProduct(int id, ProductUpdateRequest req);
     void deleteProduct(int id);
     Product getById(int id);
 
