@@ -57,4 +57,17 @@ networks:
     environment:
       REDIS_ARGS: "--requirepass Aa@123456"
   
+  ngrok:
+    image: ngrok/ngrok:latest
+    ports:
+      - "4040:4040"
+    environment:
+      NGROK_AUTHTOKEN: YOUR_NEW_TOKEN_HERE
+    command:
+      [
+        "http",
+        "--host-header=rewrite",
+        "http://host.docker.internal:8080"
+      ]
+  
   
