@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Sidebar, SidebarBody } from "@/components/ui/sidebar";
 import { ToggleLeftIcon, ToggleRightIcon } from "lucide-react";
+import { Outlet } from 'react-router-dom';
 
 // import { Outlet } from "react-router-dom";
 // import PersitentLogin from "./PersitentLogin";
@@ -37,7 +38,9 @@ const SettingLayout = ({ children }: { children: React.ReactNode }) => {
             <Outlet />
           </main>
         </PersitentLogin> */}
-        
+        <main className="container w-full">
+          <Outlet />
+        </main>
       </div>
     </>
   );

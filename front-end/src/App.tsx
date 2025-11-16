@@ -13,6 +13,12 @@ import ProductDetails from '@/page/ProductDetails';
 import UserCart from '@/page/UserCart';
 import Checkout from '@/page/Checkout';
 import PaymentCallback from '@/page/PaymentCallback';
+import ManageProduct from '@/page/ManageProduct';
+import CreateProduct from '@/page/CreateProduct';
+import UpdateProduct from '@/page/UpdateProduct';
+import ProductVariant from '@/page/ProductVariant';
+import CreateProductVariant from '@/components/shared/CreateProductVariant';
+import CreateProductVariantPage from '@/components/shared/CreateProductVariantPage';
 // import UserProfile from '@/page/UserProfile';
 
 
@@ -120,7 +126,7 @@ function App() {
             },
             {
               path: "create-product",
-              // element: <CreateProduct />,
+              element: <CreateProduct />,
             },
             {
               path: "change-password",
@@ -140,16 +146,21 @@ function App() {
             },
             {
               path: "manage-product",
-              // element: <ManageProduct />,
+              element: <ManageProduct />,
             },
             {
               path: "update-product/:id",
-              // element: <UpdateProduct />,
+              element: <UpdateProduct />,
             },
             {
-              path: "product/:id/config",
-              // element: <ProductConfig />,
+              path: "product/:id/variant",
+              element: <ProductVariant />,
             },
+            {
+              path: "create-product-variant/:productId",
+              element: <CreateProductVariantPage />,
+            },
+
           ],
         },
       ]

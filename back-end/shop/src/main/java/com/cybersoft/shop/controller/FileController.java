@@ -17,7 +17,6 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-
     @PostMapping
     public ResponseEntity<?> uploadFile(MultipartFile file) {
         return fileService.upload(file);

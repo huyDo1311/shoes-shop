@@ -8,7 +8,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "../ui/button";
-import { ShoppingCartIcon, XIcon } from "lucide-react";
+import { ShoppingCartIcon, Trash2Icon, XIcon } from "lucide-react";
 
 
 import { Link } from "react-router-dom";
@@ -102,16 +102,21 @@ const ToggleCart = () => {
                         <span className="text-sky-500">{item.quantity}</span>
                       </p>
                     </div>
-
                     <DeleteService
-                      sku={`${item.sku}`}
-                      email={`${email}`}
+                      api={orderAPI.deleteItemCart}
+                      body={{
+                        sku: item.sku,
+                        email: email
+                      }}
+                      invalidates={[["cart", email]]}
+                      successMessage="Item removed"
                     >
                       <div className="gap-x-1 max-w-[100px] items-center cursor-pointer flex">
                         <XIcon className="size-4 text-gray-400" />
                         <span className="text-gray-400 text-sm">Remove</span>
                       </div>
                     </DeleteService>
+
                   </div>
                 </div>
                 <p className="text-base text-red-500 font-semibold font-inter">

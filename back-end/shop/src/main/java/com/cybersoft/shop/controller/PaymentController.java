@@ -44,6 +44,28 @@ public class PaymentController {
         }
     }
 
+
+    @GetMapping("/vnpay-ipn")
+    public ResponseEntity<String> handleVnpayIPN(HttpServletRequest request) {
+//        String result = vnPayService.handleVnpayIPN(request);
+//        return ResponseEntity.ok(result);
+
+        // ✅ Lấy toàn bộ params từ request
+        Map<String, String> fields = new HashMap<>();
+        for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
+            String fieldName = params.nextElement();
+            String fieldValue = request.getParameter(fieldName);
+            fields.put(fieldName, fieldValue);
+        }
+
+        // ✅ Log ra console
+        System.out.println("====== VNPAY IPN CALLBACK ======");
+        fields.forEach((k, v) -> System.out.println(k + " = " + v));
+        System.out.println("================================");
+
+        // ✅ Gọi service xử lý
+        String result = vnPayService.handleVnpayIPN(request);
+
 //    @PostMapping("/vnpay-ipn")
 //    public ResponseEntity<String> handleVnpayIPN(HttpServletRequest request) {
 //        String result = vnPayService.handleVnpayIPN(request);
@@ -110,6 +132,7 @@ public class PaymentController {
     @PostMapping("/query")
     public ResponseEntity<?> query(@RequestBody QueryRequest req, HttpServletRequest servletReq) {
         Map<String, Object> result = vnPayService.queryDr(req, servletReq);
+
         return ResponseEntity.ok(result);
     }
 
