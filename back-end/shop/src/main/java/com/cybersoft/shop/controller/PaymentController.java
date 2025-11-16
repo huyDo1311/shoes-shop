@@ -6,10 +6,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/payments")
@@ -37,8 +38,25 @@ public class PaymentController {
         }
     }
 
-    @PostMapping("/vnpay-ipn")
+    @GetMapping("/vnpay-ipn")
     public ResponseEntity<String> handleVnpayIPN(HttpServletRequest request) {
+//        String result = vnPayService.handleVnpayIPN(request);
+//        return ResponseEntity.ok(result);
+
+        // ✅ Lấy toàn bộ params từ request
+        Map<String, String> fields = new HashMap<>();
+        for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
+            String fieldName = params.nextElement();
+            String fieldValue = request.getParameter(fieldName);
+            fields.put(fieldName, fieldValue);
+        }
+
+        // ✅ Log ra console
+        System.out.println("====== VNPAY IPN CALLBACK ======");
+        fields.forEach((k, v) -> System.out.println(k + " = " + v));
+        System.out.println("================================");
+
+        // ✅ Gọi service xử lý
         String result = vnPayService.handleVnpayIPN(request);
         return ResponseEntity.ok(result);
     }

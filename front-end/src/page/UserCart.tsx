@@ -1,9 +1,9 @@
-import DeleteService from "@/components/shared/DeleteService";
+
 import ToggleQuantity from "@/components/shared/ToggleQuantity";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 // import { CheckoutContext } from "@/context/CheckoutContext";
-import { Trash2Icon } from "lucide-react";
+import { Trash2Icon, XIcon } from "lucide-react";
 import { useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { orderAPI } from "@/apis/order.api";
 import type { Cart, CartItem } from "@/types/order.type";
+import DeleteService from "@/components/shared/DeleteService";
 
 const UserCart = () => {
   const navigate = useNavigate();
@@ -123,11 +124,19 @@ const UserCart = () => {
                 </div>
 
                 <div className="flex mt-3 justify-center items-center">
-                  <DeleteService sku={cart.sku} email={email}>
-                    <Button size="sm" variant="destructive">
-                      <Trash2Icon className="size-4 mr-2" />
-                      Remove
-                    </Button>
+                  <DeleteService
+                    api={orderAPI.deleteItemCart}
+                    body={{
+                      sku: cart.sku,
+                      email: email
+                    }}
+                    invalidates={[["cart", email]]}
+                    successMessage="Item removed"
+                  >
+                    <div className="gap-x-1 max-w-[100px] items-center cursor-pointer flex">
+                      <XIcon className="size-4 text-gray-400" />
+                      <span className="text-gray-400 text-sm">Remove</span>
+                    </div>
                   </DeleteService>
                 </div>
               </div>

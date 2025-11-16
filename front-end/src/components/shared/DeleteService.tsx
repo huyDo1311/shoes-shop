@@ -12,69 +12,73 @@ import {
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { orderAPI } from "@/apis/order.api";
+import axios from "axios";
 
-export type DeleteItemCartProps = {
-  sku?: string ,
-  email?: string,
+export type DeleteServiceProps = {
+  api?: (body: any) => Promise<any>;
+  // endpoint?: string;
+  method?: "post" | "delete" | "put";
+  body?: any;
+  invalidates?: any[];
+  successMessage?: string;
   children: React.ReactNode;
 };
 
-const DeleteService = ({sku, email, children } : DeleteItemCartProps) => {
+const DeleteService = ({
+  api,
+  // endpoint,
+  method = "post",
+  body,
+  invalidates = [],
+  successMessage = "Deleted successfully",
+  children,
+}: DeleteServiceProps) => {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   const queryClient = useQueryClient();
 
-    const deleteItemMutation = useMutation({
-    mutationFn: (body: Omit<DeleteItemCartProps, "children">) =>
-      orderAPI.deleteItemCart(body),
-    onSuccess: (result) => {
-      toast.success("Item removed from cart successfully!");
-      queryClient.invalidateQueries({ queryKey: ["cart", email] });
+  const mutation = useMutation({
+    mutationFn: async () => {
+      if (api) return api(body);
+
+      // return axios({
+      //   url: endpoint!,
+      //   method,
+      //   data: body,
+      // });
+    },
+    onSuccess: () => {
+      toast.success(successMessage);
+      invalidates.forEach((key) =>
+        queryClient.invalidateQueries({ queryKey: key })
+      );
       setOpen(false);
     },
-    onError: () => {
-      toast.error("Error deleting item from cart");
-    },
+    onError: () => toast.error("Error deleting"),
   });
 
-  const handleDelete = () => {
-    if (!sku || !email) {
-      toast.error("Missing SKU or user email");
-      return;
-    }
-    deleteItemMutation.mutate({ sku, email });
-  };
-
   return (
-    <>
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger className="text-red-500 text-[16px] hover:underline">
-          {children}
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-amber-600 ">
-              Are you absolutely sure?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button
-              disabled={loading}
-              onClick={handleDelete}
-              className="bg-transparent text-red-500 border border-slate-500 hover:bg-transparent hover:border-red-500"
-            >
-              {loading ? "Deleting..." : "Delete"}
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <Button
+            onClick={() => mutation.mutate()}
+            className="bg-transparent text-red-500 border border-red-500"
+          >
+            Delete
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
