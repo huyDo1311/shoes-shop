@@ -1,6 +1,8 @@
 package com.cybersoft.shop.entity;
 
 import com.cybersoft.shop.enums.OrderStatus;
+import com.cybersoft.shop.enums.PaymentMethod;
+import com.cybersoft.shop.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,6 +48,29 @@ public class Order extends BaseEntity{
     @Builder.Default
     @Column(name = "momo_txn_ref")
     private String momoTxnRef = "";
+
+    @Column(name = "vnp_trans_no")
+    private String vnpTransactionNo;
+
+    @Column(name = "vnp_bank_code")
+    private String vnpBankCode;
+
+    @Column(name = "vnp_pay_date")
+    private String vnpPayDate;
+
+    @Column(name = "vnp_create_date", length = 14)
+    private String vnpCreateDate;
+
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    @Column(name = "payment_status")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
+    @Column(name = "vnp_expected_amount")
+    private Long vnpExpectedAmount;
 
     public void recalcTotal() {
         if (items == null) { this.total = 0f; return; }

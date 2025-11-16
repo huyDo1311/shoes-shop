@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -78,20 +79,55 @@ public class VNPayUtils {
         return (ipAddress != null && !ipAddress.isEmpty()) ? ipAddress : request.getRemoteAddr();
     }
 
+//    public boolean validateSignature(Map<String, String> fields) {
+//        // Lấy chữ ký gốc từ VNPAY
+//        String vnp_SecureHash = fields.get("vnp_SecureHash");
+//
+//        // Xóa chữ ký khỏi map để không ảnh hưởng đến việc hash lại
+//        fields.remove("vnp_SecureHashType");
+//        fields.remove("vnp_SecureHash");
+//
+//        // Hash lại tất cả các trường
+//        String signValue = hashAllFields(fields);
+//
+//        // So sánh với chữ ký gốc (so sánh không phân biệt hoa thường)
+//        return signValue != null && signValue.equalsIgnoreCase(vnp_SecureHash);
+//    }
     public boolean validateSignature(Map<String, String> fields) {
         // Lấy chữ ký gốc từ VNPAY
         String vnp_SecureHash = fields.get("vnp_SecureHash");
+        if (vnp_SecureHash == null || vnp_SecureHash.isEmpty()) return false;
 
-        // Xóa chữ ký khỏi map để không ảnh hưởng đến việc hash lại
-        fields.remove("vnp_SecureHashType");
-        fields.remove("vnp_SecureHash");
+        // Tạo bản sao và loại bỏ các trường chữ ký
+        Map<String, String> data = new HashMap<>(fields);
+        data.remove("vnp_SecureHashType");
+        data.remove("vnp_SecureHash");
 
-        // Hash lại tất cả các trường
-        String signValue = hashAllFields(fields);
+        // Build chuỗi hash giống hệt khi tạo URL (sort key + URL-encode value)
+        List<String> fieldNames = new ArrayList<>(data.keySet());
+        Collections.sort(fieldNames);
 
-        // So sánh với chữ ký gốc (so sánh không phân biệt hoa thường)
-        return signValue != null && signValue.equalsIgnoreCase(vnp_SecureHash);
+        StringBuilder hashData = new StringBuilder();
+        for (int i = 0; i < fieldNames.size(); i++) {
+            String name = fieldNames.get(i);
+            String value = data.get(name);
+            if (value != null && !value.isEmpty()) {
+                hashData.append(name)
+                        .append('=')
+                        .append(URLEncoder.encode(value, StandardCharsets.US_ASCII));
+                if (i < fieldNames.size() - 1) {
+                    hashData.append('&');
+                }
+            }
+        }
+
+        // Ký HMAC SHA512  tạo URL
+        String signValue = hmacSHA512(vnPayConfig.getSecretKey(), hashData.toString());
+
+        // So sánh không phân biệt hoa thường
+        return signValue.equalsIgnoreCase(vnp_SecureHash);
     }
+
 
 }
 
