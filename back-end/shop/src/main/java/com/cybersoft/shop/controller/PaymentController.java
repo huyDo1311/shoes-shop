@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -63,49 +64,82 @@ public class PaymentController {
 
     @GetMapping("/vnpay-return")
     public ResponseEntity<Void> vnpayReturn(HttpServletRequest request) {
+        // 1) Lấy toàn bộ params VNPay gửi về
         Map<String, String> fields = new HashMap<>();
         for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
             String k = e.nextElement();
             fields.put(k, request.getParameter(k));
         }
+
+        // 2) Validate chữ ký (backend dùng, FE không cần biết)
+        boolean sigOk = vnPayUtils.validateSignature(fields);
+        String code   = fields.get("vnp_ResponseCode");
+
         System.out.println("===== VNPay Return Params =====");
         fields.forEach((k,v) -> System.out.println(k + " = " + v));
+        System.out.println("Signature OK = " + sigOk + ", vnp_ResponseCode = " + code);
         System.out.println("================================");
-        boolean ok = vnPayUtils.validateSignature(fields);
-        String code = fields.get("vnp_ResponseCode");
-//        String redirectTo = "http://localhost:3000/payment/payment-callback?status="
-//                + (ok && "00".equals(code) ? "success" : "failed")
-//                + "&vnp_TxnRef=" + fields.getOrDefault("vnp_TxnRef","");
 
-        String redirectTo = "http://localhost:8080/payments/return-view"
-                + "?status=" + ("00".equals(code) && ok ? "success" : "failed")
-                + "&vnp_TxnRef=" + fields.getOrDefault("vnp_TxnRef","")
-                + "&code=" + (code == null ? "" : code)
-                + "&sigOk=" + ok;
 
-        // 302 redirect về FE
-        return ResponseEntity.status(302).header("Location", redirectTo).build();
+        String feBase = "http://localhost:3000/payment/payment-callback";
+
+        String originalQuery = request.getQueryString();
+        String redirectTo = feBase + (originalQuery != null ? "?" + originalQuery : "");
+
+        // 4) 302 redirect về FE
+        return ResponseEntity
+                .status(302)
+                .header("Location", redirectTo)
+                .build();
     }
 
-    @GetMapping("/return-view")
-    public ResponseEntity<String> returnView(
-            @RequestParam(defaultValue = "failed") String status,
-            @RequestParam(name = "vnp_TxnRef", defaultValue = "") String txnRef,
-            @RequestParam(name = "code", defaultValue = "") String code,
-            @RequestParam(name = "sigOk", defaultValue = "false") String sigOk) {
 
-        String html = """
-      <html><body style='font-family: sans-serif'>
-        <h2>VNPay: %s</h2>
-        <p>TxnRef: %s</p>
-        <p>vnp_ResponseCode: %s</p>
-        <p>Signature valid: %s</p>
-      </body></html>
-    """.formatted("success".equals(status) ? "Thanh toán thành công" : "Thanh toán thất bại",
-                txnRef, code, sigOk);
 
-        return ResponseEntity.ok(html);
-    }
+//    @GetMapping("/vnpay-return")
+//    public ResponseEntity<Void> vnpayReturn(HttpServletRequest request) {
+//        Map<String, String> fields = new HashMap<>();
+//        for (Enumeration<String> e = request.getParameterNames(); e.hasMoreElements();) {
+//            String k = e.nextElement();
+//            fields.put(k, request.getParameter(k));
+//        }
+//        System.out.println("===== VNPay Return Params =====");
+//        fields.forEach((k,v) -> System.out.println(k + " = " + v));
+//        System.out.println("================================");
+//        boolean ok = vnPayUtils.validateSignature(fields);
+//        String code = fields.get("vnp_ResponseCode");
+////        String redirectTo = "http://localhost:3000/payment/payment-callback?status="
+////                + (ok && "00".equals(code) ? "success" : "failed")
+////                + "&vnp_TxnRef=" + fields.getOrDefault("vnp_TxnRef","");
+//
+//        String redirectTo = "http://localhost:8080/payments/return-view"
+//                + "?status=" + ("00".equals(code) && ok ? "success" : "failed")
+//                + "&vnp_TxnRef=" + fields.getOrDefault("vnp_TxnRef","")
+//                + "&code=" + (code == null ? "" : code)
+//                + "&sigOk=" + ok;
+//
+//        // 302 redirect về FE
+//        return ResponseEntity.status(302).header("Location", redirectTo).build();
+//    }
+//
+//    @GetMapping("/return-view")
+//    public ResponseEntity<String> returnView(
+//            @RequestParam(defaultValue = "failed") String status,
+//            @RequestParam(name = "vnp_TxnRef", defaultValue = "") String txnRef,
+//            @RequestParam(name = "code", defaultValue = "") String code,
+//            @RequestParam(name = "sigOk", defaultValue = "false") String sigOk) {
+//
+//        String html = """
+//      <html><body style='font-family: sans-serif'>
+//        <h2>VNPay: %s</h2>
+//        <p>TxnRef: %s</p>
+//        <p>vnp_ResponseCode: %s</p>
+//        <p>Signature valid: %s</p>
+//      </body></html>
+//    """.formatted("success".equals(status) ? "Thanh toán thành công" : "Thanh toán thất bại",
+//                txnRef, code, sigOk);
+//
+//        return ResponseEntity.ok(html);
+//    }
 
     @PostMapping("/query")
     public ResponseEntity<?> query(@RequestBody QueryRequest req, HttpServletRequest servletReq) {
