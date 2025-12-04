@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   kafka:
     image: confluentinc/cp-kafka:7.9.1
@@ -30,7 +32,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data:/var/lib/kafka/data
     networks:
-      - kafka-network
+      - ngrok-networks
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -41,7 +43,7 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     networks:
-      - kafka-network
+      - ngrok-networks
 
   redis:
     image: redis/redis-stack:7.2.0-v20
@@ -52,14 +54,14 @@ services:
     environment:
       REDIS_ARGS: "--requirepass Aa@123456"
     networks:
-      - kafka-network
+      - ngrok-networks
 
   ngrok:
     image: ngrok/ngrok:latest
     ports:
       - "4040:4040"
     environment:
-      NGROK_AUTHTOKEN: YOUR_NEW_TOKEN_HERE
+      NGROK_AUTHTOKEN: "2nNcAi1RY9t7Gee6Jxco4YiDtBy_4MBhDwhKEEMgapdxCNEKy"
     command:
       [
         "http",
@@ -67,11 +69,8 @@ services:
         "http://host.docker.internal:8080"
       ]
     networks:
-      - kafka-network
+      - ngrok-networks
 
 networks:
-  kafka-network:
+  ngrok-networks:
     driver: bridge
-
-
-
