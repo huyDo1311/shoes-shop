@@ -11,6 +11,7 @@ import com.cybersoft.shop.service.RefreshTokenService;
 import com.cybersoft.shop.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,11 +51,11 @@ public class UserController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<ResponseObject> signUp(@Valid @RequestBody SignInRequest signInRequest) throws Exception {
+    public ResponseEntity<ResponseObject> signIn(@Valid @RequestBody SignInRequest signInRequest, HttpServletRequest request) throws Exception {
 //            SecretKey key = Jwts.SIG.HS256.key().build();
 //            String secretString = Encoders.BASE64.encode(key.getEncoded());
 
-        String accessToken = userService.signIn(signInRequest);
+        String accessToken = userService.signIn(signInRequest, request);
         User user = userService.findUserByEmail(signInRequest);
         String refreshToken = refreshTokenService.createToken(signInRequest.getEmail());
 
