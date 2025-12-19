@@ -6,6 +6,7 @@ import com.cybersoft.shop.request.RefundRequest;
 import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.service.IVNPayService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class PaymentController {
     private VNPayUtils vnPayUtils;
 
     @PostMapping("/create_payment_url")
-    public ResponseEntity<ResponseObject> createPayment(@RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
+    public ResponseEntity<ResponseObject> createPayment(@Valid @RequestBody PaymentRequest paymentRequest, HttpServletRequest request) {
         try {
             String paymentUrl = vnPayService.createPaymentUrl(paymentRequest, request);
 
@@ -142,13 +143,13 @@ public class PaymentController {
 //    }
 
     @PostMapping("/query")
-    public ResponseEntity<?> query(@RequestBody QueryRequest req, HttpServletRequest servletReq) {
+    public ResponseEntity<?> query(@Valid @RequestBody QueryRequest req, HttpServletRequest servletReq) {
         Map<String, Object> result = vnPayService.queryDr(req, servletReq);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/refund")
-    public ResponseEntity<?> refund(@RequestBody RefundRequest req, HttpServletRequest servletReq) {
+    public ResponseEntity<?> refund(@Valid @RequestBody RefundRequest req, HttpServletRequest servletReq) {
         Map<String, Object> result = vnPayService.refund(req, servletReq);
         return ResponseEntity.ok(result);
     }

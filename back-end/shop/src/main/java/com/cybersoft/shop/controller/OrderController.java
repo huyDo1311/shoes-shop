@@ -30,7 +30,7 @@ public class OrderController {
     }
 
     @PostMapping("/cart/get")
-    public ResponseEntity<?> getCart(@RequestBody GetCartRequest getCartRequest) {
+    public ResponseEntity<?> getCart(@Valid @RequestBody GetCartRequest getCartRequest) {
         OrderResponse data = orderService.getCart(getCartRequest.getEmail());
         return ResponseEntity.ok(
                 ResponseObject.builder()
@@ -51,7 +51,7 @@ public class OrderController {
         );
     }
     @DeleteMapping("/cart/items/delete")
-    public ResponseEntity<?> removeItem(@RequestBody DeleteItemCartRequest deleteItemCartRequest){
+    public ResponseEntity<?> removeItem(@Valid @RequestBody DeleteItemCartRequest deleteItemCartRequest){
         OrderResponse data = orderService.removeCartItem(deleteItemCartRequest.getEmail(), deleteItemCartRequest.getSku());
         return ResponseEntity.ok(
                 ResponseObject.builder()
@@ -124,7 +124,7 @@ public class OrderController {
     }
 
     @PostMapping("/update/status")
-    public ResponseEntity<?> updateStatusVNP(@RequestBody VNPStatusUpdateRequest request){
+    public ResponseEntity<?> updateStatusVNP(@Valid @RequestBody VNPStatusUpdateRequest request){
 
         OrderResponse data = orderService.VNPStatusUpdate(request);
 

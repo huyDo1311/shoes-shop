@@ -61,7 +61,7 @@ vnpay:
   #api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
 
   pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-  return-url: "https://29d036299db9.ngrok-free.app/payments/vnpay-return"
+  return-url: "https://0131ad6b0fc1.ngrok-free.app/payments/vnpay-return"
   tmn-code: "PMVJF3VN"
   secret-key: "WYOBEV6PUO63AWKQTNJPQ7FTLM4A8KNI"
   api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
