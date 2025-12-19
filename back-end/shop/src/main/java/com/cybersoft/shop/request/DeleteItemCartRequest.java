@@ -10,7 +10,10 @@ import lombok.Setter;
 @Setter
 public class DeleteItemCartRequest {
 
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
 
+    @NotBlank
     private String sku;
 }

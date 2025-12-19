@@ -31,7 +31,7 @@ public class UserController {
     private RefreshTokenService refreshTokenService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<ResponseObject> signUp(@RequestBody SignUpRequest signUpRequest) throws Exception {
+    public ResponseEntity<ResponseObject> signUp(@Valid @RequestBody SignUpRequest signUpRequest) throws Exception {
         User user = userService.signUp(signUpRequest);
         return ResponseEntity.ok(ResponseObject.builder()
                 .status(HttpStatus.CREATED.value())
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<ResponseObject> signUp(@RequestBody SignInRequest signInRequest) throws Exception {
+    public ResponseEntity<ResponseObject> signUp(@Valid @RequestBody SignInRequest signInRequest) throws Exception {
 //            SecretKey key = Jwts.SIG.HS256.key().build();
 //            String secretString = Encoders.BASE64.encode(key.getEncoded());
 
