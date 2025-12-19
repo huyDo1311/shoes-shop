@@ -3,11 +3,14 @@ package com.cybersoft.shop.controller;
 import com.cybersoft.shop.entity.Product;
 import com.cybersoft.shop.enums.SortType;
 import com.cybersoft.shop.request.ProductCreateRequest;
+import com.cybersoft.shop.seed.ProductImageSeed;
 import com.cybersoft.shop.request.ProductUpdateRequest;
 import com.cybersoft.shop.response.FilterCriteria;
 import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.response.product.ProductListResponse;
 import com.cybersoft.shop.response.product.ProductResponse;
+import com.cybersoft.shop.seed.ImageSet;
+import com.cybersoft.shop.seed.ProductImagePool;
 import com.cybersoft.shop.service.ProductService;
 import com.github.javafaker.Faker;
 import jakarta.validation.Valid;
@@ -25,6 +28,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductImagePool productImagePool;
 
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody ProductCreateRequest productCreateRequest){
@@ -129,28 +135,36 @@ public class ProductController {
                         .build());
     }
 
-    @PostMapping("/generateFakeLikes")
-    public ResponseEntity<String> generateFakeLikes() {
-        Faker faker = new Faker();
-        for(int i=0; i<1000; i++){
-            String productName = faker.commerce().productName();
-            if(productService.existsByProductName(productName)){
-                continue;
-            }
-            ProductCreateRequest productCreateRequest = ProductCreateRequest.builder()
-                    .productName(productName)
-                    .price((float)faker.number().numberBetween(100_000, 2_000_000))
-                    .description(faker.lorem().sentence())
-                    .categoryId(faker.number().numberBetween(1,5))
-                    .brandId(faker.number().numberBetween(1,5))
-                    .build();
-            try {
-                productService.createProduct(productCreateRequest);
-            }catch (Exception e){
-                return ResponseEntity.badRequest().body(e.getMessage());
-            }
-        }
-        return ResponseEntity.ok("Fake products created successfully");
-    }
-
+    //Qua ProductCreateRequest đổi sang seed dùng tạo dữ liệu giả
+//    @PostMapping("/generateFakeLikes")
+//    public ResponseEntity<String> generateFakeLikes() {
+//        Faker faker = new Faker();
+//
+//        for (int i = 0; i < 1000; i++) {
+//            String productName = faker.commerce().productName();
+//            if (productService.existsByProductName(productName)) continue;
+//
+//            int categoryId = faker.number().numberBetween(1, 6); // 1..5
+//            int brandId = faker.number().numberBetween(1, 6);    // 1..5
+//
+//            ImageSet images = productImagePool.randomByCategory(categoryId);
+//
+//            ProductCreateRequest req = ProductCreateRequest.builder()
+//                    .productName(productName)
+//                    .price((float) faker.number().numberBetween(100_000, 2_000_000))
+//                    .description(faker.lorem().sentence())
+//                    .categoryId(categoryId)
+//                    .brandId(brandId)
+//                    // ✅ ảnh lấy từ seed pool
+//                    .thumbnail(images.thumbnail())
+//                    .productImages(List.of(
+//                            new ProductImageSeed(images.img1()),
+//                            new ProductImageSeed(images.img2())
+//                    ))
+//                    .build();
+//
+//            productService.createProduct(req);
+//        }
+//        return ResponseEntity.ok("Fake products created successfully");
+//    }
 }

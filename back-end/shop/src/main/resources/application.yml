@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   servlet:
     multipart:
       max-file-size: 4MB
@@ -33,7 +33,7 @@ spring:
 
 lockout:
   attempts-cycle: 3
-  temporary-lock: 1
+  temporary-lock: 5
   permanent-cycles: 2
 
 redis:
@@ -61,7 +61,7 @@ vnpay:
   #api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
 
   pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-  return-url: "https://0131ad6b0fc1.ngrok-free.app/payments/vnpay-return"
+  return-url: "https://e5b511adf50d.ngrok-free.app/payments/vnpay-return"
   tmn-code: "PMVJF3VN"
   secret-key: "WYOBEV6PUO63AWKQTNJPQ7FTLM4A8KNI"
   api-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"

@@ -6,6 +6,7 @@ import com.cybersoft.shop.request.SignUpRequest;
 import com.cybersoft.shop.request.UserUpdateRequest;
 import com.cybersoft.shop.request.VerifyEmailRequest;
 import com.cybersoft.shop.response.user.UserResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
@@ -13,7 +14,7 @@ public interface UserService {
 
     void verifyEmail(VerifyEmailRequest request);
 
-    String signIn(SignInRequest signInRequest) throws Exception;
+    String signIn(SignInRequest signInRequest, HttpServletRequest request);
 
     void signOut(String authHeader);
 

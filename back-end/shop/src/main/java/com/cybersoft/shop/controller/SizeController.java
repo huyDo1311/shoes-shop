@@ -1,6 +1,7 @@
 package com.cybersoft.shop.controller;
 
 import com.cybersoft.shop.request.SizeCreateRequest;
+import com.cybersoft.shop.request.SizeUpdateRequest;
 import com.cybersoft.shop.response.ResponseObject;
 import com.cybersoft.shop.response.SizeResponse;
 import com.cybersoft.shop.service.SizeService;
@@ -50,8 +51,8 @@ public class SizeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateSize(@PathVariable int id, @RequestBody SizeCreateRequest req){
-        var data = sizeService.createSize(req);
+    public ResponseEntity<?> updateSize(@PathVariable int id, @RequestBody SizeUpdateRequest req){
+        var data = sizeService.updateSize(id, req);
         ResponseObject res = new ResponseObject();
         res.setStatus(HttpStatus.OK.value());
         res.setMessage("Update size successfully");
