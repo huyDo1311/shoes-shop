@@ -3,8 +3,8 @@
 		"_postman_id": "88ac5570-0588-4428-9252-aef4ad920b3f",
 		"name": "Shoes-shop",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26921992",
-		"_collection_link": "https://cloudy-equinox-808181.postman.co/workspace/shoes-shop~8e45106e-296d-435b-acb9-951aa88d165f/collection/26921992-88ac5570-0588-4428-9252-aef4ad920b3f?action=share&source=collection_link&creator=26921992"
+		"_exporter_id": "34151154",
+		"_collection_link": "https://cloudy-equinox-808181.postman.co/workspace/shoes-shop~8e45106e-296d-435b-acb9-951aa88d165f/collection/26921992-88ac5570-0588-4428-9252-aef4ad920b3f?action=share&source=collection_link&creator=34151154"
 	},
 	"item": [
 		{
@@ -17,7 +17,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"user@gmail.com\",\r\n    \"password\":\"123456\"\r\n}",
+							"raw": "{\r\n    \"email\":\"thaihotboy231@gmail.com\",\r\n    \"password\":\"minhquan123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -39,12 +39,31 @@
 				},
 				{
 					"name": "sign-in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Login successfully', function () {\r",
+									"  pm.response.to.have.status(200)\r",
+									"  const responseJson = pm.response.json()\r",
+									"  pm.environment.set('access_token', responseJson.data.access_token.split(' ')[1])\r",
+									"  pm.environment.set('refresh_token', responseJson.data.refresh_token)\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\":\"user@gmail.com\",\n    \"password\":\"123456\"\n}",
+							"raw": "{\n    \"email\":\"nguyenhuy24112003@gmail.com\",\n    \"password\":\"quochuy123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -65,10 +84,141 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "refresh-token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/refresh-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"user@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@gmail.com\",\r\n  \"userName\": \"Cuongzzz\"\r\n \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify-email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"thaihotboy231@gmail.com\",\r\n    \"code\":\"322409\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/verify-email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"verify-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign-out",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJVU0VSIl0sImlkIjoiMGViZWRmNzQtMjUwYS00MmJiLTk3NTMtMzZlOTQ2OWI2MDUxIiwiZW1haWwiOiJuZ3V5ZW5odXkyNDExMjAwM0BnbWFpbC5jb20iLCJzdWIiOiJuZ3V5ZW5odXkyNDExMjAwM0BnbWFpbC5jb20iLCJleHAiOjE3NjI5NTUwNzJ9._Pl1KBvM11uR9OY8DIlcYXJR_UQMCneMVzaJxhUCLMk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/users/sign-out",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"sign-out"
+							]
+						}
 					},
 					"response": []
 				}
@@ -80,8 +230,914 @@
 				{
 					"name": "get all categories",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Size",
+			"item": [
+				{
+					"name": "get all size",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sizes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sizes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Color",
+			"item": [
+				{
+					"name": "get all color",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/colors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"colors"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "generateFakeLikes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/products/generateFakeLikes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"generateFakeLikes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?page=0&limit=30&sort=PriceDESC&minPrice=3000000&maxPrice=10000000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "30"
+								},
+								{
+									"key": "category",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "brand",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "PriceDESC",
+									"description": "Newest, PriceDESC, PriceASC"
+								},
+								{
+									"key": "keyword",
+									"value": "Nike",
+									"disabled": true
+								},
+								{
+									"key": "minPrice",
+									"value": "3000000"
+								},
+								{
+									"key": "maxPrice",
+									"value": "10000000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products?name=Awesome",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Awesome"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get/{id}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/925",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"925"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productName\":\"Áo sơ mi trắng đẹp\",\r\n    \"price\":\"313000\",\r\n    \"thumbnail\": \"https://res.cloudinary.com/dxsq3ivxs/image/upload/v1763016073/shoes_shop/1763016071893-hinh3.jpg\",\r\n    \"description\":\"Chất liệu siêu mát mẻ\",\r\n    \"categoryId\": 2,\r\n    \"brandId\": 1,\r\n    \"productImages\":[\r\n        {\r\n            \"imageUrl\": \"https://res.cloudinary.com/dxsq3ivxs/image/upload/v1763016072/shoes_shop/1763016070790-hinh2.jpg\"\r\n        },\r\n        { \r\n            \"imageUrl\":\"https://res.cloudinary.com/dxsq3ivxs/image/upload/v1763016070/shoes_shop/1763016068799-hinh1.jpg\" \r\n        }\r\n    ]\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products/924",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"924"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productName\":\"Áo sơ mi siêu đẹp 123\",\r\n    \"price\":\"231000\",\r\n    \"thumbnail\":\"https://res.cloudinary.com/dxsq3ivxs/image/upload/v1763016070/shoes_shop/1763016068799-hinh1.jpg\",\r\n    \"description\":\"Chất liệu siêu mát mẻ và sạch\",\r\n    \"categoryId\": 1,\r\n    \"brandId\": 1,\r\n    \"productImages\":[\r\n        {\r\n            \"imageUrl\":\"https://res.cloudinary.com/dxsq3ivxs/image/upload/v1763016072/shoes_shop/1763016070790-hinh2.jpg\" \r\n        },\r\n        { \r\n            \"imageUrl\":\"https://res.cloudinary.com/dxsq3ivxs/image/upload/v1763016073/shoes_shop/1763016071893-hinh3.jpg\" \r\n        }\r\n    ]\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Brands",
+			"item": [
+				{
+					"name": "get all brands",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/brands",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"brands"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Variant",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\" : 926,\n    \"colorId\" : 3,\n    \"sizeId\" : 1,\n    \"quantity\" : 39\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/variants",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"variants"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "generate fake data variants",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/variants/generateFakeData",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"variants",
+								"generateFakeData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\" : 924,\n    \"colorId\" : 1,\n    \"sizeId\" : 2,\n    \"quantity\" : 117\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/variants/e6601b97-563e-4b6a-8e91-1db36a0abe8d",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"variants",
+								"e6601b97-563e-4b6a-8e91-1db36a0abe8d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\" : 925,\r\n    \"colorId\" : 3,\r\n    \"sizeId\" : 3,\r\n    \"quantity\" : 353\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/variants/e7208743-e8e5-4ddc-80ac-8debc50dd739",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"variants",
+								"e7208743-e8e5-4ddc-80ac-8debc50dd739"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get/{id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\" : 925,\n    \"colorId\" : 2,\n    \"sizeId\" : 3,\n    \"quantity\" : 38\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/variants/1a036fd5-8e70-4ab0-b875-b2ae98dccd64",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"variants",
+								"1a036fd5-8e70-4ab0-b875-b2ae98dccd64"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Get Cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"user@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/cart/get",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"cart",
+								"get"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update status order",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"Confirmed\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/4/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"4",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete order",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"Confirmed\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add to cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"sku\":\"0f85ff70-121f-4de7-a4be-28fe21883fa5\",\r\n    \"quantity\":\"2\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/cart",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order by id",
+					"request": {
 						"method": "GET",
 						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update Quantity item (cart)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"user@gmail.com\",\r\n    \"sku\":\"0f85ff70-121f-4de7-a4be-28fe21883fa5\",\r\n    \"quantity\":\"3\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/cart/items",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"cart",
+								"items"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove item",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"sku\":\"53079f76-0629-4025-b4a9-ab76886000cf\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/cart/items/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"cart",
+								"items",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove all item cart",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "checkout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"user@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/checkout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel (user)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"user@gmail.com\"\r\n  \r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/14/cancel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"14",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File",
+			"item": [
+				{
+					"name": "upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/baohu/Downloads/tai-hinh-nen-dep-mien-phi-3.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/files",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"files"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "multiple",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/baohu/Downloads/src image/giaytay-1.jpg"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/baohu/Downloads/src image/giaytay-2.jpg"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/baohu/Downloads/src image/giaytay-3.jpg"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/baohu/Downloads/src image/leonui-2.jpg"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/C:/Users/baohu/Downloads/src image/leonui-3.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/files/multiple",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"files",
+								"multiple"
+							],
+							"query": [
+								{
+									"key": "files",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "URL payment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"user@gmail.com\",\r\n  \"amount\": 941782,\r\n  \"bankCode\": \"NCB\",\r\n  \"language\": \"vn\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/payments/create_payment_url",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"create_payment_url"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "query dr",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txnRef\": \"40400777\",\r\n  \"transactionDate\": \"20251115165740\",\r\n  \"orderInfo\": \"Check order ORD_20251110_0001\",\r\n  \"transactionNo\": \"\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/payments/query",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refund",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"txnRef\": \"22060126\",\r\n  \"amount\": 94178200,\r\n  \"transactionType\": \"02\",\r\n  \"transactionDate\": \"20251219223655\",\r\n  \"orderInfo\": \"Refund order 57357401\",\r\n   \"transactionNo\": \"\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/payments/refund",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"payments",
+								"refund"
+							]
+						}
 					},
 					"response": []
 				}
