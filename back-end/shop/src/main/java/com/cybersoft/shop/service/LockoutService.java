@@ -13,5 +13,9 @@ public interface LockoutService {
     void onLoginSuccess(String email);
 
     long getCurrentFail(String email);
+
+    String failMessage(String ip);
+
+    String lockMessageOrNull(String ip);
 }
 

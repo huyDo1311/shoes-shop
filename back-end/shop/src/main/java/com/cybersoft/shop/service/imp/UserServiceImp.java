@@ -20,6 +20,7 @@ import com.cybersoft.shop.component.JwtTokenUtil;
 import com.cybersoft.shop.service.VerificationService;
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,10 +41,6 @@ public class UserServiceImp implements UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    private FileService fileService;
-    @Autowired
-    private LockoutConfig lockout;
     @Autowired
     private SignUpEventPublisher signUpEventPublisher;
     @Autowired
@@ -130,73 +127,50 @@ public class UserServiceImp implements UserService {
         userRepository.save(user);
     }
 
-//    @Override
-//    public String signIn(SignInRequest signInRequest) throws Exception {
-//        Optional<User> optionalUser = userRepository.findByEmail(signInRequest.getEmail());
-//        if(optionalUser.isPresent()) {
-//            User user = optionalUser.get();
-//            if(passwordEncoder.matches(signInRequest.getPassword(),user.getPassword())){
-//
-//                String accessToken = "Bearer " + jwtTokenUtil.generateAccessToken(user);
-//
-//                return accessToken;
-//            }
-//        }
-//        throw new RuntimeException("Invalid email or password");
-//    }
+    private String getClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
+    }
 
     @Override
-    public String signIn(SignInRequest signInRequest) {
+    public String signIn(SignInRequest signInRequest, HttpServletRequest request) {
 
-        if (lockoutService.isPermanent(signInRequest.getEmail())) {
-            throw new RuntimeException("Account has been permanently locked.");
+        String ip = getClientIp(request);
+        String email = signInRequest.getEmail().trim().toLowerCase();
+
+        String lockMsg = lockoutService.lockMessageOrNull(ip);
+        if (lockMsg != null) {
+            throw new RuntimeException(lockMsg);
         }
 
-        if (lockoutService.isLocked(signInRequest.getEmail())) {
-            String timeRemaining = lockoutService.getTimeRemaining(signInRequest.getEmail());
-            throw new RuntimeException(
-                    "Account temporarily locked. Try again in " + timeRemaining + ".");
-        }
+        User user = userRepository.findByEmail(email).orElse(null);
 
-        User user = userRepository.findByEmail(signInRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+        if (user == null) {
+            throw new RuntimeException(lockoutService.failMessage(ip));
+        }
 
         if (Boolean.FALSE.equals(user.getIsActive())) {
-            throw new RuntimeException("Account has been disabled. Please contact support.");
+            throw new RuntimeException("Account has been disabled.");
         }
 
         if (!passwordEncoder.matches(signInRequest.getPassword(), user.getPassword())) {
-            String status = lockoutService.recordFailedAttempt(signInRequest.getEmail());
-
-            switch (status) {
-                case "PERM_LOCKED" -> {
-                    user.setIsActive(false);
-                    userRepository.save(user);
-                    throw new RuntimeException("Account has been permanently locked.");
-                }
-                case "TEMP_LOCKED" -> {
-                    throw new RuntimeException("Too many failed attempts. Account locked for "
-                            + lockout.getLockDurationMinutes() + " minutes.");
-                }
-                default -> {
-                    throw new RuntimeException("Invalid email or password ("
-                            + lockoutService.getCurrentFail(signInRequest.getEmail()) + "/"
-                            + lockout.getAttemptsCycle() + ").");
-                }
-            }
+            throw new RuntimeException(lockoutService.failMessage(ip));
         }
 
-        if(verificationService.haveActiveSession(signInRequest.getEmail())){
+        lockoutService.onLoginSuccess(ip);
+
+        if (verificationService.haveActiveSession(email)) {
             throw new RuntimeException("Account is already logged in from another device.");
         }
 
-        verificationService.createOrUpdateSession(signInRequest.getEmail());
+        verificationService.createOrUpdateSession(email);
 
-        lockoutService.onLoginSuccess(signInRequest.getEmail());
-
-        String accessToken = jwtTokenUtil.generateAccessToken(user);
-        return "Bearer " + accessToken;
+        return "Bearer " + jwtTokenUtil.generateAccessToken(user);
     }
+
 
     @Override
     public void signOut(String authHeader) {
@@ -218,7 +192,6 @@ public class UserServiceImp implements UserService {
 
         verificationService.clearSession(email);
     }
-
 
     @Override
     public User findUserByEmail(SignInRequest signInRequest) throws Exception {

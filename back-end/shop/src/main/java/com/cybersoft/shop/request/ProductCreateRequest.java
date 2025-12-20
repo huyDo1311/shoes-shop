@@ -1,6 +1,7 @@
 package com.cybersoft.shop.request;
 
 import com.cybersoft.shop.entity.ProductImage;
+import com.cybersoft.shop.seed.ProductImageSeed;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -33,4 +34,6 @@ public class ProductCreateRequest {
     private int brandId;
 
     private List<ProductImage> productImages;
+    //Sử dụng khi fake data
+    //private List<ProductImageSeed> productImages;
 }
